@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#8cc63f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>种地吧 · 禾伙人等级测试</title>
+<style>:root{--green:#5aa832;--deep:#2f6b1e;--leaf:#8cc63f;--wheat:#f2c14e;--gold:#e0a526;--cream:#fffaf0;--soil:#8a5a33;--text:#3b3a2a;--muted:#8b866e;--red:#e0574f;--radius:18px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:var(--text);
+  background:linear-gradient(180deg,#bfe6ff 0%,#e9f7ff 30%,#fff6dc 62%,#f6e2a8 100%) fixed;min-height:100vh}
+#app{max-width:520px;margin:0 auto;padding:0 14px calc(24px + env(safe-area-inset-bottom))}
+.screen{display:none;animation:fadeIn .35s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hidden{display:none!important}
+.card{background:rgba(255,253,245,.94);border-radius:var(--radius);padding:18px 16px;margin:14px 0;box-shadow:0 6px 18px rgba(120,100,30,.12),0 0 0 2px rgba(242,193,78,.25) inset}
+h1{margin:6px 0 4px;font-size:34px;color:var(--deep);letter-spacing:2px;text-align:center;line-height:1.2}
+h1 span{display:block;font-size:20px;color:var(--gold);letter-spacing:4px;margin-top:4px}
+h3{margin:0 0 12px;font-size:17px;color:var(--deep)}
+.hero{height:230px;margin:0 -14px;position:relative;overflow:hidden}
+.hero svg{width:100%;height:100%;display:block}
+.start-card{margin-top:-34px;position:relative;text-align:center}
+.title-badge{display:inline-block;background:var(--deep);color:#fff6d0;font-size:12px;padding:4px 12px;border-radius:99px;letter-spacing:2px}
+.sub{color:var(--muted);font-size:14px;line-height:1.7;margin:8px 0 14px}
+.member-strip{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:4px 0 16px}
+.mchip{display:inline-flex;align-items:center;gap:3px;font-size:12.5px;padding:4px 9px 4px 6px;border-radius:99px;color:#fff;font-weight:600;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.mchip i{font-style:normal;font-size:14px;background:rgba(255,255,255,.85);border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center}
+.field{display:block;text-align:left;margin:0 0 14px}
+.field span{font-size:13px;color:var(--muted)}
+.field input,.field textarea{width:100%;margin-top:6px;font-size:16px;padding:12px 14px;border:2px solid #eadbb0;border-radius:12px;background:#fffdf6;color:var(--text);outline:none;font-family:inherit}
+.field input:focus,.field textarea:focus{border-color:var(--leaf)}
+.btn{border:0;border-radius:14px;font-size:16px;font-weight:700;padding:12px 18px;cursor:pointer;font-family:inherit;transition:transform .08s}
+.btn:active{transform:scale(.97)}
+.btn.big{width:100%;padding:15px;font-size:18px}
+.btn.primary{background:linear-gradient(180deg,#7cc243,#4f9a2a);color:#fff;box-shadow:0 4px 0 #3a7a1d}
+.btn.primary:disabled{background:#c9cdb8;box-shadow:0 4px 0 #a9ad98;color:#f4f4ec}
+.btn.secondary{background:linear-gradient(180deg,#ffd76a,#f0b43a);color:#5b3d05;box-shadow:0 4px 0 #c98f1d}
+.btn.ghost{background:#f3ecd6;color:var(--soil)}
+.best{margin-top:12px;font-size:13px;color:var(--gold);min-height:18px}
+.links{margin-top:8px;font-size:13px;color:var(--muted)}
+.link{background:none;border:0;color:var(--deep);font-size:14px;text-decoration:underline;cursor:pointer;padding:6px;font-family:inherit}
+.foot{text-align:center;font-size:11px;color:#a59c7c;margin:10px 0 0}
+/* quiz */
+.quiz-top{display:flex;align-items:center;gap:10px;padding-top:calc(12px + env(safe-area-inset-top))}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.8);font-size:26px;line-height:30px;color:var(--deep);cursor:pointer}
+.progress{flex:1;height:12px;background:rgba(255,255,255,.7);border-radius:99px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}
+.progress .bar{height:100%;width:0;background:linear-gradient(90deg,var(--leaf),var(--wheat));border-radius:99px;transition:width .4s}
+.count{font-weight:700;color:var(--deep);font-size:14px;min-width:42px;text-align:right}
+.field-row{display:flex;align-items:flex-end;gap:12px;margin-top:8px}
+.plant-box{width:92px;height:110px;flex:none}
+.plant-box svg,.r-plant svg{width:100%;height:100%;overflow:visible}
+.growth{flex:1;padding-bottom:10px}
+.stage-name{font-size:20px;font-weight:800;color:var(--deep)}
+.score-pill{display:inline-block;margin-top:6px;background:#fff;border-radius:99px;padding:4px 12px;font-size:13px;color:var(--muted)}
+.score-pill b{color:var(--green);font-size:16px}
+.q-card{margin-top:6px}
+.q-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.tag{background:#eaf5dc;color:var(--deep);font-size:12px;padding:3px 10px;border-radius:99px;font-weight:700}
+.stars{color:var(--gold);font-size:13px;letter-spacing:1px}
+.qtype{font-size:12px;color:var(--muted)}
+.q-text{font-size:19px;font-weight:700;line-height:1.55;margin-bottom:14px}
+.options{display:grid;gap:10px}
+.options.tf{grid-template-columns:1fr 1fr}
+.options.who{grid-template-columns:1fr 1fr}
+.opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fffdf7;border:2px solid #eee0b8;border-radius:14px;padding:13px 14px;font-size:16px;color:var(--text);cursor:pointer;font-family:inherit;line-height:1.4;transition:background .15s,border-color .15s,transform .08s;position:relative}
+.opt:active{transform:scale(.98)}
+.opt .k{flex:none;width:26px;height:26px;border-radius:50%;background:#f4e9c6;color:var(--soil);font-weight:800;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.opt.tfbtn{justify-content:center;font-size:22px;font-weight:800;padding:18px}
+.opt.member{flex-direction:column;justify-content:center;text-align:center;padding:12px 8px;gap:6px;font-weight:700}
+.opt.member .av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.opt.correct{background:#e5f6d4;border-color:#6cbf3a}
+.opt.correct .k{background:#6cbf3a;color:#fff}
+.opt.wrong{background:#fde7e3;border-color:var(--red)}
+.opt.wrong .k{background:var(--red);color:#fff}
+.opt.dim{opacity:.55}
+.opt[disabled]{cursor:default}
+.opt.picked .k{background:var(--leaf);color:#fff}
+.order-actions{display:flex;gap:10px;margin-top:12px}
+.order-actions .btn{flex:1}
+.feedback{margin-top:14px;padding:14px;border-radius:14px;background:#f7f3e3;animation:fadeIn .3s}
+.fb-head{font-size:18px;font-weight:800;margin-bottom:6px}
+.fb-head.ok{color:#3f9a1f}.fb-head.no{color:var(--red)}
+.fb-exp{font-size:14.5px;line-height:1.65;color:#5d5944;margin-bottom:12px}
+.feedback .btn{width:100%}
+.pop{animation:pop .45s ease}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+/* result */
+.result-card{text-align:center;padding-top:22px;margin-top:calc(16px + env(safe-area-inset-top));background:radial-gradient(circle at 50% 0%,#fff6cf,rgba(255,253,245,.96) 60%)}
+.r-plant{width:120px;height:140px;margin:0 auto}
+.r-level-emoji{font-size:30px;margin-top:-4px}
+.r-stage{color:var(--gold);font-weight:700;letter-spacing:3px;font-size:14px}
+.r-level{margin:4px 0 8px;font-size:30px;color:var(--deep)}
+.r-score b{font-size:46px;color:var(--green)}
+.r-score span{font-size:20px;color:var(--muted)}
+.r-desc{color:#6b6650;line-height:1.7;font-size:14.5px;margin:6px 4px}
+.r-best{font-size:13px;color:var(--gold);margin-top:6px}
+.dedication{background:linear-gradient(135deg,#fff3f3,#fffaf0);box-shadow:0 6px 18px rgba(200,90,90,.12),0 0 0 2px rgba(240,150,150,.3) inset}
+.ded-title{font-weight:800;color:#c4566a;margin-bottom:8px}
+.ded-text{font-size:16px;line-height:1.8;white-space:pre-wrap;color:#6a4b4b}
+.fav{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.fav .av{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;flex:none;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.fav .t{font-size:14px;color:var(--muted);line-height:1.6}
+.fav .t b{font-size:20px;color:var(--text)}
+.member-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.mcell{text-align:center;font-size:11.5px}
+.mcell .av{width:40px;height:40px;margin:0 auto 4px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative}
+.mcell .pct{font-weight:800;font-size:12px}
+.cat-row{margin-bottom:10px}
+.cat-row .lab{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}
+.cat-row .track{height:10px;background:#f1e8cc;border-radius:99px;overflow:hidden}
+.cat-row .fill{height:100%;background:linear-gradient(90deg,var(--leaf),var(--wheat));border-radius:99px;width:0;transition:width .8s}
+.actions{display:grid;gap:12px;margin:16px 0}
+.home-link{display:block;margin:4px auto 10px}
+details summary{cursor:pointer;font-weight:700;color:var(--deep);font-size:15px}
+.rv{border-top:1px dashed #e6d9b0;padding:10px 0;font-size:14px;line-height:1.6}
+.rv .rq{font-weight:700}.rv .ra{color:#3f9a1f}.rv .rx{color:var(--red)}.rv .re{color:var(--muted);font-size:13px}
+.rv a{color:#a99f7c;font-size:12px}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(40,35,10,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;animation:fadeIn .2s}
+.modal-box{background:var(--cream);border-radius:20px;max-width:480px;width:100%;max-height:92vh;overflow:auto;padding:20px 16px 18px;position:relative}
+.modal-x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:28px;color:var(--muted);cursor:pointer}
+.modal-box h3{text-align:center;margin-top:0}
+.lv-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed #eadfbd}
+.lv-row .e{font-size:26px;width:36px;text-align:center}
+.lv-row .n{font-weight:800;color:var(--deep)}
+.lv-row .r{font-size:12px;color:var(--muted)}
+.cert-img{width:100%;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);display:block}
+.hint{font-size:12.5px;color:var(--muted);text-align:center;margin:10px 0}
+.modal .btn{width:100%;margin-top:8px}
+@media (min-width:700px){body{padding-top:10px}.hero{border-radius:24px;margin:10px 0 0}}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- 开始页 -->
+<section id="start" class="screen active">
+  <div class="hero" id="heroScene"></div>
+  <div class="card start-card">
+    <div class="title-badge">十个勤天 · 做大做强</div>
+    <h1>种地吧<span>禾伙人等级测试</span></h1>
+    <p class="sub">20 道题，从后陡门的第一粒种子，到金灿灿的丰收。<br>测测你是几级禾伙人？</p>
+    <div class="member-strip" id="memberStrip"></div>
+    <label class="field">
+      <span>你的昵称（选填，会写在证书上）</span>
+      <input id="nick" maxlength="12" placeholder="例如：后陡门编外人员" autocomplete="off">
+    </label>
+    <button class="btn primary big" id="btnStart">开始下地 🌾</button>
+    <div class="best" id="bestLine"></div>
+    <div class="links">
+      <button class="link" id="btnLevels">等级说明</button>
+      <span>·</span>
+      <button class="link" id="btnSettings">⚙️ 给TA的话</button>
+    </div>
+  </div>
+  <p class="foot">非官方粉丝小游戏 · 题目均整理自公开报道与资料</p>
+</section>
+
+<!-- 答题页 -->
+<section id="quiz" class="screen">
+  <div class="quiz-top">
+    <button class="icon-btn" id="btnQuit" aria-label="返回">‹</button>
+    <div class="progress"><div class="bar" id="progBar"></div></div>
+    <div class="count" id="progText">1/20</div>
+  </div>
+  <div class="field-row">
+    <div class="plant-box" id="plantBox"></div>
+    <div class="growth">
+      <div class="stage-name" id="stageName">播种期</div>
+      <div class="score-pill">答对 <b id="scoreNow">0</b> 题</div>
+    </div>
+  </div>
+  <div class="card q-card" id="qCard">
+    <div class="q-meta"><span class="tag" id="qCat"></span><span class="stars" id="qDiff"></span><span class="qtype" id="qType"></span></div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="opts"></div>
+    <div class="order-actions hidden" id="orderActions">
+      <button class="btn ghost" id="btnOrderReset">重排</button>
+      <button class="btn primary" id="btnOrderOk" disabled>确定顺序</button>
+    </div>
+    <div class="feedback hidden" id="feedback">
+      <div class="fb-head" id="fbHead"></div>
+      <div class="fb-exp" id="fbExp"></div>
+      <button class="btn primary" id="btnNext">下一题 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- 结果页 -->
+<section id="result" class="screen">
+  <div class="card result-card">
+    <div class="r-plant" id="rPlant"></div>
+    <div class="r-level-emoji" id="rEmoji"></div>
+    <div class="r-stage" id="rStage"></div>
+    <h2 class="r-level" id="rLevel"></h2>
+    <div class="r-score"><b id="rScore">0</b><span>/20</span></div>
+    <p class="r-desc" id="rDesc"></p>
+    <div class="r-best" id="rBest"></div>
+  </div>
+  <div class="card dedication hidden" id="dedicationCard">
+    <div class="ded-title">💌 给你的话</div>
+    <div class="ded-text" id="dedicationText"></div>
+  </div>
+  <div class="card">
+    <h3>💚 你最懂的少年</h3>
+    <div class="fav" id="favMember"></div>
+    <div class="member-grid" id="memberGrid"></div>
+  </div>
+  <div class="card">
+    <h3>📊 分类正确率</h3>
+    <div id="catStats"></div>
+  </div>
+  <div class="actions">
+    <button class="btn primary big" id="btnCert">生成禾伙人等级证书 📜</button>
+    <button class="btn secondary big" id="btnRetry">换一套题再来 🔁</button>
+  </div>
+  <div class="card">
+    <details id="reviewBox"><summary>📖 查看本局题目回顾</summary><div id="review"></div></details>
+  </div>
+  <button class="link home-link" id="btnHome">回到首页</button>
+</section>
+
+</div>
+
+<!-- 弹窗 -->
+<div class="modal hidden" id="modal">
+  <div class="modal-box">
+    <button class="modal-x" id="modalX" aria-label="关闭">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<canvas id="certCanvas" width="1080" height="1500" style="display:none"></canvas>
+
+<script>window.ZD_DATA={"members": [{"name": "蒋敦豪", "color": "#e8833a", "icon": "🐑", "rank": "老大", "hometown": "新疆博乐"}, {"name": "鹭卓", "color": "#e2557a", "icon": "🌹", "rank": "老二", "hometown": "山西太原"}, {"name": "李耕耘", "color": "#8a6a3c", "icon": "🧱", "rank": "老三", "hometown": "重庆"}, {"name": "李昊", "color": "#d4a62a", "icon": "💰", "rank": "老四", "hometown": "广东佛山顺德"}, {"name": "赵一博", "color": "#3d8bd4", "icon": "🐔", "rank": "老五", "hometown": "山西长治"}, {"name": "卓沅", "color": "#d6455a", "icon": "🍓", "rank": "老六", "hometown": "河南许昌"}, {"name": "赵小童", "color": "#8e5bc9", "icon": "🎨", "rank": "老七", "hometown": "山东青岛"}, {"name": "何浩楠", "color": "#2aa59a", "icon": "🦆", "rank": "老八", "hometown": "浙江丽水"}, {"name": "陈少熙", "color": "#2f6fb5", "icon": "🦐", "rank": "老九", "hometown": "甘肃兰州"}, {"name": "王一珩", "color": "#ef6c3a", "icon": "🦞", "rank": "老十（老幺）", "hometown": "内蒙古呼和浩特"}], "questions": [{"cat": "节目大事件", "diff": 1, "type": "single", "q": "《种地吧》第一季在哪个平台首播？", "options": ["爱奇艺", "芒果TV", "腾讯视频", "优酷"], "answer": 0, "explain": "《种地吧》由爱奇艺出品，第一季在爱奇艺独播。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q001"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "《种地吧》第一季是哪天开播的？", "options": ["2023年2月4日", "2022年11月20日", "2023年5月4日", "2024年2月23日"], "answer": 0, "explain": "第一季于2023年2月4日在爱奇艺上线，播出时少年们已经种了两三个月的地。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://www.thepaper.cn/newsDetail_forward_22084304"], "members": [], "id": "q002"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "十个勤天种地的“大本营”在哪里？", "options": ["杭州三墩镇后陡门", "苏州周庄", "成都郫都", "南京江宁"], "answer": 0, "explain": "节目在杭州西湖区三墩镇后陡门录制。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": [], "id": "q003"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "第一季，十个少年耕种的土地大约有多少亩？", "options": ["142.8亩", "45亩", "450亩", "1000亩"], "answer": 0, "explain": "第一季：10个人、190天、142.8亩地。", "src": ["https://www.thepaper.cn/newsDetail_forward_22084304", "https://news.qq.com/rain/a/20230217A03X4M00", "http://www.very.cqtimes.cn/yule/20230224/31529.html"], "members": [], "id": "q004"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "第一季节目记录了少年们大约多少天的种地生活？", "options": ["190天", "30天", "100天", "365天"], "answer": 0, "explain": "第一季记录10位年轻人用约190天时间耕种土地。", "src": ["https://www.thepaper.cn/newsDetail_forward_22084304", "https://news.qq.com/rain/a/20230217A03X4M00"], "members": [], "id": "q005"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "到了第二季，十个勤天的农田总面积扩大到约多少亩？", "options": ["约450亩", "约150亩", "约1000亩", "约50亩"], "answer": 0, "explain": "第二季农田约450亩，相比第一季翻了三倍。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://thepaper.cn/newsDetail_forward_27467181"], "members": [], "id": "q006"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "第一季少年们正式下地后的第一项任务是什么？", "options": ["收割八块田的水稻", "种玫瑰", "搭羊圈", "挖鱼塘"], "answer": 0, "explain": "第一项任务是收割八块农田的水稻，卖粮收入作为之后的启动资金。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://news.qq.com/rain/a/20230227A08TWH00"], "members": [], "id": "q007"}, {"cat": "节目大事件", "diff": 3, "type": "single", "q": "第一季抢收水稻，少年们用6天一共收获了多少稻谷？", "options": ["62.66吨", "13吨", "6.26吨", "179.05吨"], "answer": 0, "explain": "经历多次陷泥和维修，6天收割了62.66吨稻谷。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.thepaper.cn/newsDetail_forward_22084304", "https://news.qq.com/rain/a/20230227A08TWH00"], "members": [], "id": "q008"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "少年们开会时，公司名最初定的是哪个？", "options": ["十个晴天", "十个青天", "十全十美", "后陡门农场"], "answer": 0, "explain": "最初取名“十个晴天”，注册时发现重名，改为“十个勤天”。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q009"}, {"cat": "节目大事件", "diff": 2, "type": "who", "q": "“十个晴天”这个公司名，是谁在征名会上提出的？", "options": ["蒋敦豪", "李昊", "赵一博", "卓沅"], "answer": 0, "explain": "征名策划会上，蒋敦豪提出的“十个晴天”获得了大家共鸣。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["蒋敦豪"], "id": "q010"}, {"cat": "节目大事件", "diff": 3, "type": "single", "q": "十个勤天（杭州）农业发展有限责任公司成立于哪天？", "options": ["2023年2月21日", "2023年2月4日", "2022年11月1日", "2023年6月6日"], "answer": 0, "explain": "公司于2023年2月21日成立。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "http://www.very.cqtimes.cn/yule/20230224/31529.html"], "members": [], "id": "q011"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "十个勤天公司的注册资本是多少？", "options": ["1万元", "10万元", "100万元", "1000元"], "answer": 0, "explain": "注册资本1万元，经营范围包括谷物种植等。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "http://www.very.cqtimes.cn/yule/20230224/31529.html"], "members": [], "id": "q012"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "十个勤天公司里，谁担任董事长？", "options": ["蒋敦豪", "卓沅", "李昊", "李耕耘"], "answer": 0, "explain": "蒋敦豪任董事长，其余成员任董事。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "http://www.very.cqtimes.cn/yule/20230224/31529.html", "https://news.qq.com/rain/a/20240725A06LHZ00"], "members": ["蒋敦豪"], "id": "q013"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "第一季诞生的十个勤天口号是？", "options": ["十个勤天，做大做强！", "十个勤天，天天向上！", "种地种地，越种越富！", "后陡门，冲冲冲！"], "answer": 0, "explain": "口号“十个勤天，做大做强！”诞生于第一季，第二季又加上“再创辉煌”。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": [], "id": "q014"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "《种地吧》的节目标语是？", "options": ["相信土地的力量", "土地不会说谎", "一分耕耘一分收获", "汗水浇灌希望"], "answer": 0, "explain": "节目标语：相信土地的力量（Believe in the land!）。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q015"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "《种地吧》的主题曲叫什么？", "options": ["《芽》", "《麦芒》", "《后陡门的夏》", "《光》"], "answer": 0, "explain": "主题曲是《芽》，陆虎曾在节目中分享它背后的创作故事。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q016"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "第一季最后，十个勤天开着收割机收获了什么？", "options": ["142亩小麦", "水稻", "玉米", "油菜花"], "answer": 0, "explain": "第50期：十个勤天开收割机收割142亩小麦，温情收官。", "src": ["https://www.iq.com/play/%E7%A7%8D%E5%9C%B0%E5%90%A7%E7%AC%AC1%E5%AD%A3-2023-7-29-x4dtv5pq68?lang=zh_cn", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q017"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "第一季在麦田举办的感恩音乐会叫什么名字？", "options": ["《麦田相约》", "《种下一个未来》", "《展开一天》", "《后陡门之夜》"], "answer": 0, "explain": "第一季的感恩音乐会名为《麦田相约》。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.iq.com/play/%E7%A7%8D%E5%9C%B0%E5%90%A7%E7%AC%AC1%E5%AD%A3-2023-7-29-x4dtv5pq68?lang=zh_cn"], "members": [], "id": "q018"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "2023年端午的杭州西溪湿地龙舟赛，十个勤天获得了第几名？", "options": ["亚军", "冠军", "季军", "第五名"], "answer": 0, "explain": "十个勤天在2023年6月22日西溪湿地龙舟赛中获得亚军。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://zh.wikipedia.org/zh-cn/十个勤天"], "members": [], "id": "q019"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "2024年3月，十个勤天自费在沙漠里种了多少棵梭梭树苗？", "options": ["18万棵", "1.8万棵", "1800棵", "180万棵"], "answer": 0, "explain": "十个勤天在腾格里沙漠一周内栽种18万棵梭梭树苗，占地约500亩。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://thepaper.cn/newsDetail_forward_27467181"], "members": [], "id": "q020"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "十个勤天种下18万棵梭梭树的地方是？", "options": ["腾格里沙漠", "塔克拉玛干沙漠", "库布齐沙漠", "毛乌素沙地"], "answer": 0, "explain": "2024年植树节前后，在甘肃腾格里沙漠种梭梭树。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://thepaper.cn/newsDetail_forward_27467181"], "members": [], "id": "q021"}, {"cat": "节目大事件", "diff": 1, "type": "tf", "q": "十个勤天曾经登上过央视春节联欢晚会的舞台。", "options": ["对", "错"], "answer": 0, "explain": "对！十个勤天参加了2024年春晚（长沙分会场）和2025年春晚开场《迎福》。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q022"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "《种地吧》第二季是哪天开播的？", "options": ["2024年2月23日", "2024年1月1日", "2023年11月8日", "2024年5月20日"], "answer": 0, "explain": "第二季于2024年2月23日起在爱奇艺播出。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": [], "id": "q023"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "第二季除了爱奇艺，还在哪个电视台播出？", "options": ["江苏卫视", "浙江卫视", "湖南卫视", "东方卫视"], "answer": 0, "explain": "第二季2024年3月17日起在江苏卫视每周日播出。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": [], "id": "q024"}, {"cat": "节目大事件", "diff": 3, "type": "single", "q": "《种地吧》第三季是哪天开播的？", "options": ["2025年2月28日", "2025年1月28日", "2025年5月14日", "2024年11月26日"], "answer": 0, "explain": "第三季于2025年2月28日起在爱奇艺播出。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧"], "members": [], "id": "q025"}, {"cat": "节目大事件", "diff": 3, "type": "single", "q": "第三季首期，十个勤天机械化收割了多少吨水稻？", "options": ["179.05吨", "62.66吨", "100吨", "30吨"], "answer": 0, "explain": "第三季首期齐心完成179.05吨水稻机械化收割，然后去了青海囊谦。", "src": ["https://news.qq.com/rain/a/20250409A08DAV00"], "members": [], "id": "q026"}, {"cat": "节目大事件", "diff": 3, "type": "single", "q": "以下哪个地方是《种地吧》第三季走访的？", "options": ["黑龙江林口", "西藏墨脱", "新疆于田", "云南西双版纳"], "answer": 0, "explain": "第三季走访青海囊谦、黑龙江林口、湖南宁乡等地；其余三处是第四季去的。", "src": ["https://news.qq.com/rain/a/20250409A08DAV00", "https://biz.ifeng.com/c/8t8vEqt5vTG"], "members": [], "id": "q027"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "《种地吧》第四季是哪天开播的？", "options": ["2026年5月14日", "2026年2月4日", "2026年3月3日", "2026年7月1日"], "answer": 0, "explain": "第四季2026年5月14日在爱奇艺开播，十个勤天全员回归。", "src": ["https://biz.ifeng.com/c/8t8vEqt5vTG", "https://yidsh.com/zixun/20260508131802b44cdbe4e7"], "members": [], "id": "q028"}, {"cat": "节目大事件", "diff": 3, "type": "single", "q": "第四季开播前的“开工直播”，网友云监工的是种植什么？", "options": ["天麻", "人参", "水稻", "草莓"], "answer": 0, "explain": "3月3日开启的开工直播，邀请网友云监工天麻种植。", "src": ["https://biz.ifeng.com/c/8t8vEqt5vTG"], "members": [], "id": "q029"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "第四季在新疆于田（塔克拉玛干沙漠南缘），少年们参与种植的是？", "options": ["沙漠玫瑰", "哈密瓜", "棉花", "葡萄"], "answer": 0, "explain": "他们深入沙漠腹地参与沙漠玫瑰种植。", "src": ["https://biz.ifeng.com/c/8t8vEqt5vTG", "https://hongxingwenyu.com/focus/22534.html"], "members": [], "id": "q030"}, {"cat": "节目大事件", "diff": 3, "type": "single", "q": "第四季在西藏墨脱，十个勤天为什么果林搭建了索道？", "options": ["香蕉林", "苹果林", "茶园", "橘子林"], "answer": 0, "explain": "在西藏墨脱为香蕉林搭建索道，是本季助农的名场面之一。", "src": ["https://hongxingwenyu.com/focus/22534.html"], "members": [], "id": "q031"}, {"cat": "节目大事件", "diff": 1, "type": "order", "q": "把《种地吧》四季的开播顺序排一排（从早到晚）", "options": ["第一季开播（2023年2月）", "第二季开播（2024年2月）", "第三季开播（2025年2月）", "第四季开播（2026年5月）"], "answer": [0, 1, 2, 3], "explain": "2023.2.4 → 2024.2.23 → 2025.2.28 → 2026.5.14。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://biz.ifeng.com/c/8t8vEqt5vTG"], "members": [], "id": "q032"}, {"cat": "节目大事件", "diff": 3, "type": "order", "q": "按时间先后排列十个勤天的这些大事", "options": ["腾格里沙漠种梭梭树", "《种下一个未来》巡演杭州首站", "首张专辑《展开一天》上线", "登上2025年春晚开场"], "answer": [0, 1, 2, 3], "explain": "2024年3月种树 → 2024年6月28日巡演首站 → 2024年9月16日专辑 → 2025年1月28日春晚。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天"], "members": [], "id": "q033"}, {"cat": "节目大事件", "diff": 2, "type": "order", "q": "按第一季发生的先后顺序排列", "options": ["抢收八块田的水稻", "搬运30吨化肥", "卸下4000盆玫瑰", "开收割机收割麦田"], "answer": [0, 1, 2, 3], "explain": "第一季从秋收水稻开始，经历搬化肥、种玫瑰，最后收割小麦收官。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q034"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "《种地吧》的衍生节目叫什么？", "options": ["《你好，种地少年》", "《向往的生活》", "《种地吧·夏天》", "《后陡门日记》"], "answer": 0, "explain": "衍生节目《你好，种地少年》已播出两季。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://zh.wikipedia.org/zh-cn/十个勤天"], "members": [], "id": "q035"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "十个勤天的巡回演唱会叫什么名字？", "options": ["《种下一个未来》", "《麦田相约》", "《做大做强》", "《相信土地的力量》"], "answer": 0, "explain": "《种下一个未来》巡回演唱会于2024年6月从杭州开启。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://news.qq.com/rain/a/20240725A06LHZ00"], "members": [], "id": "q036"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "《种下一个未来》巡回演唱会的首站在哪座城市？", "options": ["杭州", "北京", "成都", "广州"], "answer": 0, "explain": "首站是杭州，2024年6月28日至30日。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://news.qq.com/rain/a/20240725A06LHZ00"], "members": [], "id": "q037"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "十个勤天的第一张录音室专辑叫什么？", "options": ["《展开一天》", "《故乡长卷》", "《麦芒》", "《后陡门的夏》"], "answer": 0, "explain": "首张专辑《展开一天》于2024年9月16日上线。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天"], "members": [], "id": "q038"}, {"cat": "节目大事件", "diff": 1, "type": "single", "q": "《种地吧》和十个勤天的粉丝被称为？", "options": ["禾伙人", "稻友", "麦粉", "种子"], "answer": 0, "explain": "观众被称为“禾伙人”。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://news.qq.com/rain/a/20240725A06LHZ00"], "members": [], "id": "q039"}, {"cat": "节目大事件", "diff": 2, "type": "single", "q": "第四季收官时，少年们回到后陡门用什么方式播种水稻？", "options": ["无人机播种", "人工插秧", "马拉犁", "飞机撒播"], "answer": 0, "explain": "在师傅指导下用自动化无人机播种水稻，感叹“科技改变农业”。", "src": ["https://www.yangtse.com/news/wy/202608/t20260827_386833.html", "https://hongxingwenyu.com/focus/22534.html"], "members": [], "id": "q040"}, {"cat": "节目大事件", "diff": 2, "type": "tf", "q": "第二季取消了第一季种植组、基建组、养殖组的分组，回归10人共同劳作。", "options": ["对", "错"], "answer": 0, "explain": "对。第二季回归10人共同劳作，不过出门在外还会沿用第一季的分组当小分队。", "src": ["https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665", "https://www.sohu.com/a/773168934_121119372"], "members": [], "id": "q041"}, {"cat": "节目大事件", "diff": 2, "type": "tf", "q": "《种地吧》第一季一共有50期正片。", "options": ["对", "错"], "answer": 0, "explain": "对。第一季共50期，第二季43期，第三季40期。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q042"}, {"cat": "农事知识", "diff": 1, "type": "single", "q": "第一季开局遇到的“双抢”，指的是？", "options": ["抢收晚稻、抢种冬小麦", "抢收玉米、抢种大豆", "抢收西瓜、抢种水稻", "抢修大棚、抢挖鱼塘"], "answer": 0, "explain": "十一月正逢“双抢”：抢割水稻、抢种小麦，一年中最忙的时候。", "src": ["https://news.qq.com/rain/a/20230227A08TWH00", "https://www.thepaper.cn/newsDetail_forward_22084304"], "members": [], "id": "q043"}, {"cat": "农事知识", "diff": 2, "type": "single", "q": "第一季的冬小麦必须在哪个节气之前播种完成？", "options": ["冬至", "立夏", "清明", "芒种"], "answer": 0, "explain": "“双抢”中抢种冬小麦，必须在冬至前播种完成。", "src": ["https://news.qq.com/rain/a/20230227A08TWH00"], "members": [], "id": "q044"}, {"cat": "农事知识", "diff": 2, "type": "single", "q": "导演说第一季录制192天，原因是？", "options": ["麦子的生长周期就是192天", "节目合同规定", "正好半年", "等玫瑰开花"], "answer": 0, "explain": "杨长岭：录制用192天，是因为麦子的生长周期就是192天。", "src": ["https://news.qq.com/rain/a/20230227A08TWH00"], "members": [], "id": "q045"}, {"cat": "农事知识", "diff": 1, "type": "single", "q": "第一季播种小麦时，靠什么“不到两分钟”就完成了撒种？", "options": ["无人机", "播种机", "人工手撒", "拖拉机"], "answer": 0, "explain": "在无人机助力下，播种任务耗时不到两分钟。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q046"}, {"cat": "农事知识", "diff": 2, "type": "tf", "q": "第一季中，十个少年最后实现了人手一本拖拉机驾驶证。", "options": ["对", "错"], "answer": 0, "explain": "对！没拿证的七人外出考试，补考通过后全员人手一本。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://news.qq.com/rain/a/20230217A03X4M00"], "members": [], "id": "q047"}, {"cat": "农事知识", "diff": 1, "type": "single", "q": "第一季少年们冒雨人工搬运了多少吨化肥？", "options": ["30吨", "3吨", "300吨", "10吨"], "answer": 0, "explain": "搬运计划变更至30吨，两辆卡车还相继陷车。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.thepaper.cn/newsDetail_forward_22084304"], "members": [], "id": "q048"}, {"cat": "农事知识", "diff": 3, "type": "single", "q": "第一季施肥时，“技术指导”李耕耘制定的施肥策略叫什么？", "options": ["“331”策略", "“123”策略", "“666”策略", "“三三制”"], "answer": 0, "explain": "成员们分工采用了李耕耘制定的“331”施肥策略。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["李耕耘"], "id": "q049"}, {"cat": "农事知识", "diff": 3, "type": "single", "q": "立夏时节，少年们跟着村里做“立夏饭”，煮的是什么饭？", "options": ["乌米饭", "八宝饭", "竹筒饭", "扬州炒饭"], "answer": 0, "explain": "立夏村里做立夏饭，何浩楠、王一珩、赵一博帮忙煮乌米饭。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q050"}, {"cat": "农事知识", "diff": 1, "type": "single", "q": "第一季种植组在大棚里培育的主要花卉是？", "options": ["玫瑰", "郁金香", "向日葵", "百合"], "answer": 0, "explain": "种植组敲定了7500盆玫瑰的订单，后来还做了玫瑰专场直播。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://zh.wikipedia.org/zh-cn/种地吧"], "members": [], "id": "q051"}, {"cat": "农事知识", "diff": 3, "type": "single", "q": "第二季学草莓种植，少年们出差去了哪里？", "options": ["辽宁丹东", "江苏盱眙", "山东寿光", "云南昆明"], "answer": 0, "explain": "一组去丹东学草莓种植，另一组去盱眙学龙虾养殖。", "src": ["https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": [], "id": "q052"}, {"cat": "农事知识", "diff": 3, "type": "single", "q": "第二季学小龙虾养殖，少年们出差去了哪里？", "options": ["江苏盱眙", "湖北潜江", "辽宁丹东", "浙江舟山"], "answer": 0, "explain": "陈少熙、何浩楠、王一珩、李昊、赵一博出差盱眙学习龙虾养殖。", "src": ["https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": [], "id": "q053"}, {"cat": "农事知识", "diff": 2, "type": "single", "q": "第三季在黑龙江，少年们尝试用沙棘油做什么产品？", "options": ["手工皂", "果酱", "面膜", "蜡烛"], "answer": 0, "explain": "他们用沙棘油做手工皂，还发起“乡村合伙人计划”。", "src": ["https://news.qq.com/rain/a/20250409A08DAV00"], "members": [], "id": "q054"}, {"cat": "农事知识", "diff": 3, "type": "single", "q": "第四季在新疆，少年们践行的科学治沙理念是？", "options": ["先造林、后造田", "先造田、后造林", "只种草不种树", "引水灌沙"], "answer": 0, "explain": "在塔克拉玛干南缘践行“先造林、后造田”的治沙理念。", "src": ["https://biz.ifeng.com/c/8t8vEqt5vTG"], "members": [], "id": "q055"}, {"cat": "农事知识", "diff": 2, "type": "single", "q": "第四季在西藏墨脱，少年们感受到了怎样的极致地理差异？", "options": ["一日四季", "四季如冬", "终年无雨", "极昼极夜"], "answer": 0, "explain": "沿扎墨公路前行，感受“一日四季”。", "src": ["https://biz.ifeng.com/c/8t8vEqt5vTG"], "members": [], "id": "q056"}, {"cat": "农事知识", "diff": 2, "type": "single", "q": "第一季种植组的水培生菜收获了多少斤，最后入驻了生鲜超市？", "options": ["2000斤", "200斤", "2万斤", "500斤"], "answer": 0, "explain": "2000斤水培生菜在张绍刚牵线下入驻生鲜超市。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.zyshow.net/dl/zhongdiba/v/20230715.html"], "members": [], "id": "q057"}, {"cat": "农事知识", "diff": 2, "type": "single", "q": "以下哪组成员都考取了无人机驾驶证？", "options": ["何浩楠、鹭卓、卓沅", "蒋敦豪、李昊、赵小童", "李耕耘、陈少熙、王一珩", "赵一博、李昊、蒋敦豪"], "answer": 0, "explain": "第一季后何浩楠、鹭卓、卓沅考取无人机驾驶证，第四季由他们带队无人机播种。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://hongxingwenyu.com/focus/22534.html"], "members": [], "id": "q058"}, {"cat": "农事知识", "diff": 3, "type": "single", "q": "第四季回到后陡门，送达大棚的平菇菌包有多少个？", "options": ["2800个", "280个", "28000个", "800个"], "answer": 0, "explain": "2800个平菇菌包运达大棚，摆完后挂牌“十个勤天菌菇生产基地”。", "src": ["https://www.yangtse.com/news/wy/202608/t20260827_386833.html", "https://hongxingwenyu.com/focus/22534.html"], "members": [], "id": "q059"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "蒋敦豪的生日是？", "options": ["5月21日", "11月24日", "7月15日", "8月27日"], "answer": 0, "explain": "蒋敦豪生于1995年5月21日。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.toutiao.com/article/7367051382739780106/", "https://m.mxgxt.com/news/view/1414645"], "members": ["蒋敦豪"], "id": "q060"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "大哥蒋敦豪的家乡是？", "options": ["新疆博乐", "内蒙古呼和浩特", "甘肃兰州", "山西太原"], "answer": 0, "explain": "蒋敦豪出生于新疆博尔塔拉蒙古自治州博乐市。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.baike.com/wikiid/7264835420595601460"], "members": ["蒋敦豪"], "id": "q061"}, {"cat": "少年档案", "diff": 1, "type": "single", "q": "蒋敦豪是哪支乐队的成员？", "options": ["旅行新蜜蜂", "五月天", "新裤子", "ZERO-G"], "answer": 0, "explain": "蒋敦豪是旅行新蜜蜂乐队的成员。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.baike.com/wikiid/7264835420595601460", "https://www.toutiao.com/article/7367051382739780106/"], "members": ["蒋敦豪"], "id": "q062"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "蒋敦豪2016年获得了哪个音乐节目的全国总冠军？", "options": ["《中国新歌声》", "《快乐男声》", "《明日之子》", "《创造营2021》"], "answer": 0, "explain": "2016年获《中国新歌声》全国总冠军。", "src": ["https://www.toutiao.com/article/7367051382739780106/"], "members": ["蒋敦豪"], "id": "q063"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "第一季分组中，蒋敦豪在哪个组？", "options": ["养殖组", "种植组", "基建组", "后勤组"], "answer": 0, "explain": "养殖组：蒋敦豪、何浩楠、赵一博。", "src": ["https://www.sohu.com/a/773168934_121119372", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["蒋敦豪"], "id": "q064"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "鹭卓的本名是？", "options": ["路卓豪", "张钥沅", "李命镪", "何懿峻"], "answer": 0, "explain": "鹭卓本名路卓豪。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.toutiao.com/article/7367051382739780106/", "https://www.sohu.com/a/773168934_121119372"], "members": ["鹭卓"], "id": "q065"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "鹭卓的家乡是？", "options": ["山西太原", "山西长治", "河南许昌", "山东青岛"], "answer": 0, "explain": "鹭卓出生于山西太原。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://m.mxgxt.com/news/view/1414645"], "members": ["鹭卓"], "id": "q066"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "鹭卓和卓沅同属哪个男团？", "options": ["ZERO-G", "旅行新蜜蜂", "再就业男团", "时代少年团"], "answer": 0, "explain": "鹭卓、卓沅都是ZERO-G成员。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.toutiao.com/article/7367051382739780106/", "https://www.sohu.com/a/773168934_121119372"], "members": ["鹭卓", "卓沅"], "id": "q067"}, {"cat": "少年档案", "diff": 2, "type": "who", "q": "《后陡门的夏》是谁作词作曲的？", "options": ["鹭卓", "蒋敦豪", "卓沅", "何浩楠"], "answer": 0, "explain": "《后陡门的夏》由鹭卓作词作曲，卓沅写了rap词。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.sohu.com/a/773168934_121119372"], "members": ["鹭卓"], "id": "q068"}, {"cat": "名场面", "diff": 1, "type": "who", "q": "谁被称为“后陡门外号最多的男人”？", "options": ["鹭卓", "李昊", "赵小童", "陈少熙"], "answer": 0, "explain": "“大狗”“玫瑰花王子”……鹭卓成了外号最多的男人。", "src": ["https://www.sohu.com/a/773168934_121119372", "https://www.iq.com/play/%E7%A7%8D%E5%9C%B0%E5%90%A7%E7%AC%AC1%E5%AD%A3-2023-7-29-x4dtv5pq68?lang=zh_cn"], "members": ["鹭卓"], "id": "q069"}, {"cat": "少年档案", "diff": 2, "type": "who", "q": "第一季种植组的组长是谁？", "options": ["鹭卓", "卓沅", "陈少熙", "李耕耘"], "answer": 0, "explain": "种植组组长鹭卓，组员卓沅、陈少熙。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.sohu.com/a/773168934_121119372"], "members": ["鹭卓"], "id": "q070"}, {"cat": "少年档案", "diff": 2, "type": "who", "q": "第二季项目提案会上，想种食用玫瑰做鲜花饼的是谁？", "options": ["鹭卓", "卓沅", "李昊", "赵小童"], "answer": 0, "explain": "鹭卓喜欢鲜花饼，提案种植食用玫瑰制作鲜花饼。", "src": ["https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665", "https://thepaper.cn/newsDetail_forward_27467181"], "members": ["鹭卓"], "id": "q071"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "鹭卓毕业于哪所学校？", "options": ["四川音乐学院", "北京电影学院", "暨南大学", "中国戏曲学院"], "answer": 0, "explain": "鹭卓毕业于四川音乐学院音乐表演专业。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.sohu.com/a/773168934_121119372"], "members": ["鹭卓"], "id": "q072"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "李耕耘的本名是？", "options": ["李命镪", "李镓壕", "陈波翰", "路卓豪"], "answer": 0, "explain": "李耕耘原名李命镪，后改名李耕耘。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.toutiao.com/article/7367051382739780106/"], "members": ["李耕耘"], "id": "q073"}, {"cat": "少年档案", "diff": 1, "type": "single", "q": "李耕耘的家乡是？", "options": ["重庆", "成都", "广东顺德", "浙江丽水"], "answer": 0, "explain": "李耕耘出生于重庆。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.baike.com/wikiid/7264835420595601460", "https://m.mxgxt.com/news/view/1414645"], "members": ["李耕耘"], "id": "q074"}, {"cat": "少年档案", "diff": 2, "type": "who", "q": "第一季基建组的组长是谁？", "options": ["李耕耘", "李昊", "赵小童", "王一珩"], "answer": 0, "explain": "基建组组长李耕耘，还就地翻新改造宿舍。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.sohu.com/a/773168934_121119372"], "members": ["李耕耘"], "id": "q075"}, {"cat": "名场面", "diff": 1, "type": "who", "q": "农活技能满点、当过排水总指挥，被观众怀疑“是不是节目组找来的本地人”的是？", "options": ["李耕耘", "赵一博", "蒋敦豪", "何浩楠"], "answer": 0, "explain": "李耕耘临危受命当排水总指挥，农业技能让人以为他是本地人。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://news.qq.com/rain/a/20230217A03X4M00"], "members": ["李耕耘"], "id": "q076"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "李耕耘毕业于哪所学校？", "options": ["北京电影学院", "四川音乐学院", "上海海事大学", "中国戏曲学院"], "answer": 0, "explain": "李耕耘2020年毕业于北京电影学院表演专业。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.baike.com/wikiid/7264835420595601460"], "members": ["李耕耘"], "id": "q077"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "李昊的家乡是？", "options": ["广东佛山顺德", "广东广州", "福建厦门", "浙江丽水"], "answer": 0, "explain": "李昊出生于广东省佛山市顺德区。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.baike.com/wikiid/7264835420595601460"], "members": ["李昊"], "id": "q078"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "李昊毕业于哪所大学？", "options": ["暨南大学", "中山大学", "北京电影学院", "上海海事大学"], "answer": 0, "explain": "李昊毕业于暨南大学。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.baike.com/wikiid/7264835420595601460"], "members": ["李昊"], "id": "q079"}, {"cat": "少年档案", "diff": 1, "type": "single", "q": "李昊在十个勤天公司里管什么？", "options": ["财务（财务部部长）", "秘书部", "后勤部", "保卫科"], "answer": 0, "explain": "李昊是财务部兼宣传部部长，还向会计系志愿者学分类记账。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["李昊"], "id": "q080"}, {"cat": "少年档案", "diff": 3, "type": "who", "q": "第一季开会时，提出“辣椒酱盲盒”商业提案的是谁？", "options": ["李昊", "李耕耘", "陈少熙", "赵小童"], "answer": 0, "explain": "李昊提出辣椒酱盲盒提案，得到大家一致认可。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["李昊"], "id": "q081"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "“志胜杯”篮球赛输了，要把床位让给小狗红包的是谁？", "options": ["李昊", "赵小童", "鹭卓", "何浩楠"], "answer": 0, "explain": "室友组对决，输掉比赛的李昊把床位让给了小狗红包。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["李昊"], "id": "q082"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "赵一博的家乡是？", "options": ["山西长治", "山西太原", "河北石家庄", "山东青岛"], "answer": 0, "explain": "赵一博出生于山西长治。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.baike.com/wikiid/7264835420595601460", "https://m.mxgxt.com/news/view/1414645"], "members": ["赵一博"], "id": "q083"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "赵一博大学学的是什么专业？", "options": ["轮机工程", "表演", "音乐", "会计"], "answer": 0, "explain": "毕业于上海海事大学商船学院轮机工程系。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.baike.com/wikiid/7264835420595601460"], "members": ["赵一博"], "id": "q084"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "赵一博在十个勤天公司里担任什么职务？", "options": ["秘书部部长", "财务部部长", "总经理", "公关部长"], "answer": 0, "explain": "秘书部部长赵一博，出差前高效做出五人名片。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": ["赵一博"], "id": "q085"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "无人机撒种前，用Excel现场算好每块田需要多少化肥的是？", "options": ["赵一博", "李昊", "李耕耘", "卓沅"], "answer": 0, "explain": "“赵工”赵一博用Excel现场计算每块田所需化肥量。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["赵一博"], "id": "q086"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "卓沅耕地时旋耕机冒黑烟，谁发现是空滤器问题并修好了？", "options": ["赵一博", "李耕耘", "何浩楠", "蒋敦豪"], "answer": 0, "explain": "赵一博用专业知识修好了旋耕机。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["赵一博"], "id": "q087"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "守着孵蛋器、当“小鸡助产士”的“鸡爸爸”是谁？", "options": ["赵一博", "何浩楠", "蒋敦豪", "王一珩"], "answer": 0, "explain": "小鸡破壳，赵一博兴奋地当起小鸡助产士，被称“鸡爸爸”。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["赵一博"], "id": "q088"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "吃立夏饭时不知道还有别的菜，连炫四碗米饭的是？", "options": ["赵一博", "赵小童", "王一珩", "何浩楠"], "answer": 0, "explain": "赵一博直接连炫四碗米饭，惊呆网友。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["赵一博"], "id": "q089"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "第四季摆放2800个平菇菌包时，化身总指挥、还哼儿歌打气的是？", "options": ["赵一博", "李耕耘", "蒋敦豪", "卓沅"], "answer": 0, "explain": "赵一博化身总指挥，“儿歌大王”在线发力。", "src": ["https://hongxingwenyu.com/focus/22534.html", "https://www.yangtse.com/news/wy/202608/t20260827_386833.html"], "members": ["赵一博"], "id": "q090"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "卓沅的本名是？", "options": ["张钥沅", "路卓豪", "何懿峻", "李镓壕"], "answer": 0, "explain": "卓沅本名张钥沅。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "http://www.very.cqtimes.cn/yule/20230224/31529.html"], "members": ["卓沅"], "id": "q091"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "卓沅的家乡是？", "options": ["河南许昌", "河南郑州", "山西长治", "甘肃兰州"], "answer": 0, "explain": "卓沅是河南许昌人，《故乡长卷》里他唱的是《豫见月光》。", "src": ["https://m.mxgxt.com/news/view/1414645", "https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["卓沅"], "id": "q092"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "卓沅在十个勤天公司担任什么职务？", "options": ["总经理CEO", "董事长", "监事", "保卫科长"], "answer": 0, "explain": "卓沅是十个勤天总经理CEO。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["卓沅"], "id": "q093"}, {"cat": "名场面", "diff": 1, "type": "who", "q": "十个勤天的“舞蹈老师”、负责给大家排舞的是谁？", "options": ["卓沅", "鹭卓", "王一珩", "何浩楠"], "answer": 0, "explain": "男团出身的卓沅负责排舞，麦田音乐会和春晚都是他抠细节。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.sohu.com/a/773168934_121119372"], "members": ["卓沅"], "id": "q094"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "第一季卓沅的拿手菜（经常把兄弟们辣到不行）是？", "options": ["麻辣猪蹄", "水煮鱼", "辣子鸡", "麻婆豆腐"], "answer": 0, "explain": "卓沅和赵小童多数时间承包中晚饭，卓沅拿手菜是麻辣猪蹄。", "src": ["https://www.sohu.com/a/773168934_121119372"], "members": ["卓沅"], "id": "q095"}, {"cat": "少年档案", "diff": 2, "type": "who", "q": "第二季提案会上，计划无土栽培草莓的是谁？", "options": ["卓沅", "鹭卓", "赵小童", "陈少熙"], "answer": 0, "explain": "卓沅计划无土栽培草莓，后来大家去丹东学技术。", "src": ["https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": ["卓沅"], "id": "q096"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "第四季收生菜那天正好过生日的“水培大亨”是？", "options": ["卓沅", "李耕耘", "李昊", "何浩楠"], "answer": 0, "explain": "寿星卓沅在线分工，带着大家收水培生菜。", "src": ["https://www.yangtse.com/news/wy/202608/t20260827_386833.html", "https://hongxingwenyu.com/focus/22534.html"], "members": ["卓沅"], "id": "q097"}, {"cat": "少年档案", "diff": 1, "type": "single", "q": "赵小童的家乡是？", "options": ["山东青岛", "山东济南", "辽宁大连", "天津"], "answer": 0, "explain": "赵小童是山东青岛人，《故乡长卷》里唱《山东魂》。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://m.mxgxt.com/news/view/1414645", "https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["赵小童"], "id": "q098"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "赵小童的生日是？", "options": ["12月20日", "12月3日", "11月6日", "6月16日"], "answer": 0, "explain": "赵小童生于1999年12月20日。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.toutiao.com/article/7367051382739780106/"], "members": ["赵小童"], "id": "q099"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "赵小童在十个勤天公司里是什么部长？", "options": ["后勤部部长", "财务部部长", "秘书部部长", "公关部长"], "answer": 0, "explain": "赵小童是后勤部部长。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["赵小童"], "id": "q100"}, {"cat": "名场面", "diff": 1, "type": "who", "q": "第一季抢收水稻时，不听师傅劝阻撞坏了收割机的是谁？", "options": ["赵小童", "鹭卓", "李昊", "陈少熙"], "answer": 0, "explain": "这段让观众记住了“嘴硬冲动一生要强”的赵小童。", "src": ["https://www.thepaper.cn/newsDetail_forward_22084304", "https://news.qq.com/rain/a/20230217A03X4M00"], "members": ["赵小童"], "id": "q101"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "在墙上画出十人形象，农夫市集上文创摊位第一个售罄的是？", "options": ["赵小童", "王一珩", "李昊", "卓沅"], "answer": 0, "explain": "赵小童把种地生活画在墙上，市集文创摊一边画一边卖，第一个售罄。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["赵小童"], "id": "q102"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "下地摘樱桃萝卜还随身带着豆瓣酱、边收边蘸着吃的是？", "options": ["赵小童", "李耕耘", "王一珩", "赵一博"], "answer": 0, "explain": "赵小童带豆瓣酱下地，推荐樱桃萝卜蘸酱吃。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["赵小童"], "id": "q103"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "何浩楠的家乡是？", "options": ["浙江丽水", "浙江杭州", "福建福州", "江西南昌"], "answer": 0, "explain": "何浩楠出生于浙江丽水。", "src": ["https://www.toutiao.com/article/7367051382739780106/", "https://www.baike.com/wikiid/7264835420595601460", "https://m.mxgxt.com/news/view/1414645"], "members": ["何浩楠"], "id": "q104"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "给好不容易救活的小羊取名“晴天”的是谁？", "options": ["何浩楠", "蒋敦豪", "赵一博", "王一珩"], "answer": 0, "explain": "第二天，何浩楠为幸存的小羊取名“晴天”。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["何浩楠"], "id": "q105"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "送别家禽时身手利落，获封“抓鸡王”的是？", "options": ["何浩楠", "赵小童", "赵一博", "李耕耘"], "answer": 0, "explain": "何浩楠靠干脆利落的拿捏手法获封“抓鸡王”。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["何浩楠"], "id": "q106"}, {"cat": "少年档案", "diff": 2, "type": "who", "q": "第二季提案会上，打算承包老家杨梅林的是？", "options": ["何浩楠", "李耕耘", "陈少熙", "卓沅"], "answer": 0, "explain": "何浩楠打算承包老家（浙江丽水）的杨梅林。", "src": ["https://www.newton.com.tw/wiki/%E3%80%8A%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%BA%8C%E5%AD%A3%E3%80%8B/63504665"], "members": ["何浩楠"], "id": "q107"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "何浩楠的本名是？", "options": ["何懿峻", "何浩然", "陈波翰", "张钥沅"], "answer": 0, "explain": "何浩楠本名何懿峻。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "http://www.very.cqtimes.cn/yule/20230224/31529.html"], "members": ["何浩楠"], "id": "q108"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "第一季养殖组里，何浩楠主要照顾的是？", "options": ["鸭子", "鱼", "猪", "蜜蜂"], "answer": 0, "explain": "何浩楠清洗鸭舍、照顾鸭子，还想“偷”赵一博的鸡架给鸭用。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["何浩楠"], "id": "q109"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "陈少熙的家乡是？", "options": ["甘肃兰州", "陕西西安", "新疆乌鲁木齐", "宁夏银川"], "answer": 0, "explain": "陈少熙出生于甘肃兰州，《故乡长卷》唱的是《陇上花开》。", "src": ["https://www.baike.com/wikiid/7264835420595601460", "https://www.toutiao.com/article/7367051382739780106/", "https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["陈少熙"], "id": "q110"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "陈少熙在中国戏曲学院学的是什么专业？", "options": ["昆曲表演", "京剧表演", "戏剧导演", "舞蹈"], "answer": 0, "explain": "陈少熙2023年毕业于中国戏曲学院昆曲表演专业，音乐会上唱了《玉簪记·琴挑》。", "src": ["https://www.baike.com/wikiid/7264835420595601460", "https://www.sohu.com/a/773168934_121119372", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["陈少熙"], "id": "q111"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "陈少熙在十个勤天公司里的职务是？", "options": ["公关部长、水产部总经理", "财务部部长", "后勤部部长", "总经理"], "answer": 0, "explain": "陈少熙是公关部长兼水产部总经理。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["陈少熙"], "id": "q112"}, {"cat": "名场面", "diff": 1, "type": "who", "q": "第一季负责虾塘、首次开业就供不应求的是？", "options": ["陈少熙", "王一珩", "卓沅", "何浩楠"], "answer": 0, "explain": "陈少熙的虾塘首次开业就供不应求，只能下塘现场捞虾补货。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["陈少熙"], "id": "q113"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "为了守护虾塘，拿大喇叭苦口婆心“劝说”鸟群的是？", "options": ["陈少熙", "鹭卓", "王一珩", "李昊"], "answer": 0, "explain": "陈少熙借鹅赶鸟，还拿出大喇叭开启劝说模式。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["陈少熙"], "id": "q114"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "陈少熙的本名是？", "options": ["陈波翰", "陈少华", "李镓壕", "路卓豪"], "answer": 0, "explain": "陈少熙本名陈波翰，兄弟们也叫他“陈波”。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://www.sohu.com/a/773168934_121119372"], "members": ["陈少熙"], "id": "q115"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "第四季回后陡门，作为“熙湖”塘主担任收网总指挥的是？", "options": ["陈少熙", "赵小童", "蒋敦豪", "李耕耘"], "answer": 0, "explain": "“熙湖”塘主陈少熙带着兄弟们去鱼塘看鱼收网。", "src": ["https://www.yangtse.com/news/wy/202608/t20260827_386833.html"], "members": ["陈少熙"], "id": "q116"}, {"cat": "少年档案", "diff": 1, "type": "single", "q": "十个勤天里年纪最小的“老幺”是谁？", "options": ["王一珩", "陈少熙", "何浩楠", "赵小童"], "answer": 0, "explain": "王一珩2004年出生，是老十、老幺。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://thepaper.cn/newsDetail_forward_27467181"], "members": ["王一珩"], "id": "q117"}, {"cat": "少年档案", "diff": 2, "type": "single", "q": "王一珩的家乡是？", "options": ["内蒙古呼和浩特", "新疆博乐", "黑龙江哈尔滨", "甘肃兰州"], "answer": 0, "explain": "王一珩出生于内蒙古呼和浩特，《故乡长卷》唱的是《亲亲我的草原》。", "src": ["https://www.baike.com/wikiid/7264835420595601460", "https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["王一珩"], "id": "q118"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "在篝火晚会上表演原创歌曲《-18℃》的是谁？", "options": ["王一珩", "卓沅", "鹭卓", "何浩楠"], "answer": 0, "explain": "王一珩表演原创歌曲《-18℃》，嗨到王栎鑫加入伴舞。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.baike.com/wikiid/7264835420595601460"], "members": ["王一珩"], "id": "q119"}, {"cat": "少年档案", "diff": 2, "type": "who", "q": "第二季当上龙虾组组长、带着哥哥们筑堤养虾的是？", "options": ["王一珩", "陈少熙", "何浩楠", "李昊"], "answer": 0, "explain": "上一季只有18岁的弟弟，这一季成了龙虾组组长。", "src": ["https://thepaper.cn/newsDetail_forward_27467181"], "members": ["王一珩"], "id": "q120"}, {"cat": "少年档案", "diff": 3, "type": "single", "q": "王一珩给自己养的小龙虾起了什么名字？", "options": ["六尾飘移虾", "飞天小龙虾", "后陡门虾王", "勤天一号"], "answer": 0, "explain": "弟弟给龙虾起了个符合他年纪的名字“六尾飘移虾”。", "src": ["https://thepaper.cn/newsDetail_forward_27467181"], "members": ["王一珩"], "id": "q121"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "外出采购时把唯一的橙子让给哥哥们、坐实“团宠”身份的是？", "options": ["王一珩", "陈少熙", "何浩楠", "赵小童"], "answer": 0, "explain": "“懂事老幺”王一珩学孔融让梨，结果坐实团宠。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["王一珩"], "id": "q122"}, {"cat": "名场面", "diff": 1, "type": "single", "q": "母羊难产，是谁从母羊肚子里救出、又通宵守护小羊“晴天”的？", "options": ["蒋敦豪", "李昊", "卓沅", "李耕耘"], "answer": 0, "explain": "蒋敦豪颤抖着双手救出小羊并通宵看护，何浩楠、赵一博一起帮忙。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.sohu.com/a/704381099_120098805"], "members": ["蒋敦豪"], "id": "q123"}, {"cat": "名场面", "diff": 1, "type": "single", "q": "十个勤天的吉祥物“晴天”是什么动物？", "options": ["小羊", "小狗", "小鸭", "小鸡"], "answer": 0, "explain": "小羊晴天被称为十个勤天的吉祥物，最亲大哥蒋敦豪。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.sohu.com/a/704381099_120098805"], "members": [], "id": "q124"}, {"cat": "名场面", "diff": 2, "type": "single", "q": "第一季陪伴少年们的小狗叫什么名字？", "options": ["红包", "晴天", "旺财", "麦芒"], "answer": 0, "explain": "小狗叫“红包”，李昊还把床位让给过它。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q125"}, {"cat": "名场面", "diff": 2, "type": "single", "q": "第一季外出摆摊卖平菇，赚到的“第一桶金”是多少钱？", "options": ["4元", "40元", "400元", "4000元"], "answer": 0, "explain": "手忙脚乱挣到第一桶金4元钱，后来李昊主动流动销售。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q126"}, {"cat": "名场面", "diff": 2, "type": "single", "q": "第一季种植组第一批到货、全员加剧组流水线才卸完的玫瑰有多少盆？", "options": ["4000盆", "400盆", "1000盆", "7500盆"], "answer": 0, "explain": "第一批4000盆玫瑰到货，导演组也来帮忙流水线作战。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q127"}, {"cat": "名场面", "diff": 3, "type": "tf", "q": "第一季订了7500盆玫瑰，卸完第一批4000盆后，卓沅决定把剩下的3500盆退回。", "options": ["对", "错"], "answer": 0, "explain": "对，在卓沅谨慎的决定下，后续3500盆全部退回。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q128"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "自告奋勇应聘面包车司机，结果明明有驾照却连续让车熄火的是？", "options": ["鹭卓", "李昊", "赵小童", "陈少熙"], "answer": 0, "explain": "鹭卓自告奋勇当司机，却连续熄火。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["鹭卓"], "id": "q129"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "开挖掘机运土，一铲把运输车压变形，成为新晋“载具杀手”的是？", "options": ["陈少熙", "赵小童", "何浩楠", "李耕耘"], "answer": 0, "explain": "陈少熙一铲土把运输车压变形，“载具杀手”又添一员。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["陈少熙"], "id": "q130"}, {"cat": "名场面", "diff": 2, "type": "who", "q": "修羊圈时听出羊叫“跑调”，当起羊圈音乐导师的是？", "options": ["蒋敦豪", "鹭卓", "卓沅", "王一珩"], "answer": 0, "explain": "蒋敦豪音乐人雷达启动，点评羊的发声方式不对。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["蒋敦豪"], "id": "q131"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "加固围栏时直接用牙齿撕胶带、“一撕一个准”的是？", "options": ["何浩楠", "赵一博", "蒋敦豪", "赵小童"], "answer": 0, "explain": "何浩楠用牙撕胶带，蒋敦豪“画饼”赚钱后给他配牙套。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["何浩楠"], "id": "q132"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "水泥地被走地鸡踩坏，和鸡现场对话、怒怼它“为老不尊”的是？", "options": ["李耕耘", "王一珩", "李昊", "赵小童"], "answer": 0, "explain": "李耕耘和王一珩平地，未干的水泥被鸡破坏。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["李耕耘"], "id": "q133"}, {"cat": "名场面", "diff": 3, "type": "who", "q": "好奇尝新品种辣椒，被辣出“鹅叫”拿水管往嘴里冲的是？", "options": ["王一珩", "李耕耘", "陈少熙", "赵小童"], "answer": 0, "explain": "王一珩辣出鹅叫，李耕耘则辣得喘气还嘴硬说不辣。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["王一珩"], "id": "q134"}, {"cat": "名场面", "diff": 2, "type": "single", "q": "第一季篝火晚会上，全员围着篝火合唱了哪首歌？", "options": ["《醒来吧少年》", "《芽》", "《麦芒》", "《我的好兄弟》"], "answer": 0, "explain": "全员围着篝火合唱加油曲《醒来吧少年》。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://zh.wikipedia.org/zh-cn/种地吧"], "members": [], "id": "q135"}, {"cat": "名场面", "diff": 3, "type": "single", "q": "第一季养殖组的母羊全部生产完，一共健康降生了多少只小羊？", "options": ["14只", "4只", "40只", "10只"], "answer": 0, "explain": "母羊全部生产，14只小羊健康降生。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q136"}, {"cat": "名场面", "diff": 2, "type": "single", "q": "鹭卓、卓沅、陈少熙因时常“白干”又热血沸腾，被称为《种地吧》的？", "options": ["三个大聪明", "三剑客", "铁三角", "三朵金花"], "answer": 0, "explain": "种植组三人被称为“三个大聪明”。", "src": ["https://www.sohu.com/a/773168934_121119372"], "members": ["鹭卓", "卓沅", "陈少熙"], "id": "q137"}, {"cat": "十个勤天日常", "diff": 2, "type": "order", "q": "按年龄从大到小排列这四位少年", "options": ["蒋敦豪", "李耕耘", "赵一博", "王一珩"], "answer": [0, 1, 2, 3], "explain": "老大蒋敦豪(1995) → 老三李耕耘(1996) → 老五赵一博(1998) → 老幺王一珩(2004)。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://m.mxgxt.com/news/view/1414645"], "members": ["蒋敦豪", "李耕耘", "赵一博", "王一珩"], "id": "q138"}, {"cat": "十个勤天日常", "diff": 3, "type": "order", "q": "按年龄从大到小排列这四位少年", "options": ["鹭卓", "李昊", "卓沅", "陈少熙"], "answer": [0, 1, 2, 3], "explain": "老二鹭卓(1995.11) → 老四李昊(1997) → 老六卓沅(1999.6) → 老九陈少熙(2002)。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://m.mxgxt.com/news/view/1414645"], "members": ["鹭卓", "李昊", "卓沅", "陈少熙"], "id": "q139"}, {"cat": "十个勤天日常", "diff": 3, "type": "single", "q": "十个勤天里，哪两位的生日都是11月6日？", "options": ["赵一博和何浩楠", "鹭卓和卓沅", "李昊和李耕耘", "蒋敦豪和王一珩"], "answer": 0, "explain": "赵一博1998年11月6日、何浩楠2000年11月6日，同一天生日！", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天", "https://m.mxgxt.com/news/view/1414645"], "members": ["赵一博", "何浩楠"], "id": "q140"}, {"cat": "十个勤天日常", "diff": 2, "type": "single", "q": "专辑《故乡长卷》里，《山东魂》是谁唱的？", "options": ["赵小童", "赵一博", "蒋敦豪", "李昊"], "answer": 0, "explain": "《故乡长卷》每人唱一首家乡歌，赵小童唱《山东魂》。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["赵小童"], "id": "q141"}, {"cat": "十个勤天日常", "diff": 2, "type": "single", "q": "专辑《故乡长卷》里，《陇上花开》是谁唱的？", "options": ["陈少熙", "王一珩", "蒋敦豪", "鹭卓"], "answer": 0, "explain": "陈少熙来自甘肃兰州，唱的是《陇上花开》。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["陈少熙"], "id": "q142"}, {"cat": "十个勤天日常", "diff": 3, "type": "single", "q": "专辑《故乡长卷》里，李昊唱的家乡歌叫什么？", "options": ["《靓汤》", "《寄往山城的思念》", "《风的思念》", "《小城回忆》"], "answer": 0, "explain": "广东顺德的李昊唱《靓汤》。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["李昊"], "id": "q143"}, {"cat": "十个勤天日常", "diff": 2, "type": "single", "q": "第一季十个少年一起住的家被叫做？", "options": ["少年之家", "勤天宿舍", "麦田小屋", "后陡门酒店"], "answer": 0, "explain": "基建组把宿舍翻新成“少年之家”，麦家还来开辟了图书角。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": [], "id": "q144"}, {"cat": "十个勤天日常", "diff": 2, "type": "single", "q": "节目播出期间，“禾伙人”可以通过什么方式“云监工”少年们干活？", "options": ["微博、抖音直播", "电话热线", "报纸连载", "广播电台"], "answer": 0, "explain": "成员们在微博和抖音做日常打卡直播，禾伙人云监工。", "src": ["https://zh.wikipedia.org/zh-cn/种地吧", "https://biz.ifeng.com/c/8t8vEqt5vTG"], "members": [], "id": "q145"}, {"cat": "十个勤天日常", "diff": 3, "type": "single", "q": "第一季早饭通常由谁负责？", "options": ["鹭卓", "赵小童", "卓沅", "李昊"], "answer": 0, "explain": "第一季鹭卓负责早饭，卓沅和赵小童承包中饭和晚饭。", "src": ["https://www.sohu.com/a/773168934_121119372"], "members": ["鹭卓"], "id": "q146"}, {"cat": "十个勤天日常", "diff": 3, "type": "single", "q": "在玫瑰专场直播之前，十个勤天先成功试水直播卖的是什么？", "options": ["笋", "玫瑰", "小龙虾", "大米"], "answer": 0, "explain": "蒋敦豪、李昊直播卖笋“主打浮夸”，之后又开了玫瑰专场直播。", "src": ["https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894", "https://www.zyshow.net/dl/zhongdiba/v/20230715.html"], "members": [], "id": "q147"}, {"cat": "十个勤天日常", "diff": 3, "type": "single", "q": "HOLDOUMEN服饰的主理人是哪三位？", "options": ["鹭卓、何浩楠、王一珩", "蒋敦豪、李昊、卓沅", "李耕耘、赵一博、赵小童", "陈少熙、卓沅、鹭卓"], "answer": 0, "explain": "HOLDOUMEN服饰成立于2024年6月26日，主理人是鹭卓、何浩楠、王一珩。", "src": ["https://zh.wikipedia.org/zh-cn/十个勤天"], "members": ["鹭卓", "何浩楠", "王一珩"], "id": "q148"}, {"cat": "十个勤天日常", "diff": 2, "type": "single", "q": "第一季分组中，基建组的成员是？", "options": ["李耕耘、李昊、赵小童、王一珩", "蒋敦豪、何浩楠、赵一博", "鹭卓、卓沅、陈少熙", "李耕耘、鹭卓、蒋敦豪、卓沅"], "answer": 0, "explain": "基建组：李耕耘、李昊、赵小童、王一珩。", "src": ["https://www.sohu.com/a/773168934_121119372", "https://www.newton.com.tw/wiki/%E7%A8%AE%E5%9C%B0%E5%90%A7%E7%AC%AC%E4%B8%80%E5%AD%A3%E7%AF%80%E7%9B%AE%E5%88%97%E8%A1%A8/64041894"], "members": ["李耕耘", "李昊", "赵小童", "王一珩"], "id": "q149"}, {"cat": "十个勤天日常", "diff": 1, "type": "tf", "q": "十个勤天全员回归了《种地吧》第四季。", "options": ["对", "错"], "answer": 0, "explain": "对！第四季官宣：十个勤天全员集结回归。", "src": ["https://biz.ifeng.com/c/8t8vEqt5vTG", "https://yidsh.com/zixun/20260508131802b44cdbe4e7"], "members": [], "id": "q150"}]};window.ZD_DEDICATION="";</script>
+<script>(function(){
+'use strict';
+var DATA = window.ZD_DATA, MEMBERS = DATA.members, BANK = DATA.questions;
+var MCOLOR = {}, MICON = {};
+MEMBERS.forEach(function(m){ MCOLOR[m.name]=m.color; MICON[m.name]=m.icon; });
+var N_Q = 20;
+var LS = { best:'zd_best', seen:'zd_seen', nick:'zd_nick', ded:'zd_dedication' };
+var LEVELS = [
+  {min:0,  emoji:'🌰', stage:'播种期', name:'见习禾伙人', desc:'种子刚落进后陡门的泥土里～多补几期《种地吧》，很快就能发芽啦！'},
+  {min:6,  emoji:'🌱', stage:'发芽期', name:'萌芽禾伙人', desc:'嫩芽破土！你已经认识十个勤天了，再多云监工几次就能拔节长高。'},
+  {min:10, emoji:'🌿', stage:'拔节期', name:'成长禾伙人', desc:'稳稳拔节，后陡门的大事小事你都知道不少，是靠谱的禾伙人！'},
+  {min:13, emoji:'🌾', stage:'抽穗期', name:'资深禾伙人', desc:'稻穗抽出来啦！名场面张口就来，十个少年的小细节也难不倒你。'},
+  {min:16, emoji:'🍚', stage:'灌浆期', name:'骨干禾伙人', desc:'颗颗饱满正在灌浆！你大概是看着他们从一片荒地一路种过来的吧。'},
+  {min:19, emoji:'🏆', stage:'丰收期', name:'金牌禾伙人', desc:'金灿灿大丰收！你就是后陡门编外第十一人，十个勤天做大做强有你一份！'}
+];
+var DEFAULT_DEDICATION = (window.ZD_DEDICATION||'');
+
+function $(id){ return document.getElementById(id); }
+function el(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function lsGet(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d;} }
+function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function levelOf(score){ var L=LEVELS[0]; LEVELS.forEach(function(l){ if(score>=l.min) L=l; }); return L; }
+function levelIdx(score){ var i=0; LEVELS.forEach(function(l,k){ if(score>=l.min) i=k; }); return i; }
+function show(id){ ['start','quiz','result'].forEach(function(s){ $(s).classList.toggle('active', s===id); }); window.scrollTo(0,0); }
+
+/* ---------------- SVG 插画 ---------------- */
+function heroSVG(){
+  var wheat='';
+  for(var i=0;i<26;i++){
+    var x=8+i*15.5+(i%2)*4, h=26+((i*37)%16), y=204;
+    wheat+='<g transform="translate('+x+','+y+')"><g class="ws"><path d="M0 0 Q2 -'+(h/2)+' 0 -'+h+'" stroke="#c99a2e" stroke-width="2" fill="none"/>'+
+      '<ellipse cx="0" cy="-'+(h+6)+'" rx="4" ry="9" fill="#f2c14e"/><ellipse cx="-4" cy="-'+(h-4)+'" rx="3" ry="7" fill="#e8b33c" transform="rotate(-25 -4 -'+(h-4)+')"/><ellipse cx="4" cy="-'+(h-4)+'" rx="3" ry="7" fill="#e8b33c" transform="rotate(25 4 -'+(h-4)+')"/></g></g>';
+  }
+  return '<svg viewBox="0 0 400 230" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">'+
+  '<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd8ff"/><stop offset="1" stop-color="#e8f7ff"/></linearGradient>'+
+  '<radialGradient id="sun"><stop offset="0" stop-color="#fff6b0"/><stop offset=".6" stop-color="#ffd84a"/><stop offset="1" stop-color="#ffc21f"/></radialGradient></defs>'+
+  '<rect width="400" height="230" fill="url(#sky)"/>'+
+  '<g class="sunrot"><circle cx="325" cy="52" r="26" fill="url(#sun)"/>'+
+   [0,45,90,135,180,225,270,315].map(function(a){return '<rect x="323" y="12" width="4" height="12" rx="2" fill="#ffd84a" transform="rotate('+a+' 325 52)"/>';}).join('')+'</g>'+
+  '<g fill="#fff" opacity=".95"><g class="cloud1"><ellipse cx="70" cy="45" rx="28" ry="12"/><ellipse cx="88" cy="38" rx="18" ry="13"/><ellipse cx="55" cy="40" rx="14" ry="10"/></g>'+
+  '<g class="cloud2"><ellipse cx="210" cy="30" rx="22" ry="9"/><ellipse cx="224" cy="25" rx="14" ry="10"/></g></g>'+
+  '<path d="M0 150 Q100 110 200 140 T400 128 V230 H0Z" fill="#a6d86a"/>'+
+  '<path d="M0 170 Q120 140 240 165 T400 160 V230 H0Z" fill="#7cc243"/>'+
+  '<path d="M0 182 L400 170" stroke="#6aae35" stroke-width="2"/><path d="M0 196 L400 186" stroke="#6aae35" stroke-width="2"/>'+
+  // 小房子（少年之家）
+  '<g transform="translate(40,118)"><rect x="0" y="16" width="46" height="30" fill="#fff5dd" stroke="#b98a4a" stroke-width="2"/><path d="M-6 18 L23 -2 L52 18Z" fill="#d9663a"/><rect x="18" y="28" width="11" height="18" fill="#b98a4a"/><rect x="5" y="24" width="9" height="8" fill="#9fd8ff" stroke="#b98a4a"/><rect x="33" y="24" width="9" height="8" fill="#9fd8ff" stroke="#b98a4a"/></g>'+
+  // 拖拉机
+  '<g transform="translate(170,146)"><g class="tractor"><rect x="0" y="6" width="38" height="16" rx="3" fill="#e0574f"/><rect x="22" y="-8" width="16" height="16" rx="2" fill="#e0574f"/><rect x="25" y="-5" width="10" height="8" fill="#bfe6ff"/><rect x="6" y="-4" width="4" height="10" fill="#555"/>'+
+  '<circle cx="31" cy="24" r="10" fill="#333"/><circle cx="31" cy="24" r="4" fill="#f2c14e"/><circle cx="8" cy="26" r="6" fill="#333"/><circle cx="8" cy="26" r="2.5" fill="#f2c14e"/></g></g>'+
+  // 鸭子
+  '<g transform="translate(320,170)"><g class="duck"><ellipse cx="0" cy="0" rx="11" ry="7" fill="#fff"/><circle cx="9" cy="-7" r="5" fill="#fff"/><path d="M13 -7 l6 1 -6 2z" fill="#f29a2e"/><circle cx="10" cy="-8" r="1" fill="#333"/></g>'+
+  '<g transform="translate(24,6) scale(.75)"><g class="duck d2"><ellipse cx="0" cy="0" rx="11" ry="7" fill="#ffe27a"/><circle cx="9" cy="-7" r="5" fill="#ffe27a"/><path d="M13 -7 l6 1 -6 2z" fill="#f29a2e"/><circle cx="10" cy="-8" r="1" fill="#333"/></g></g></g>'+
+  // 小羊
+  '<g transform="translate(118,166)"><ellipse cx="0" cy="0" rx="13" ry="9" fill="#fff"/><circle cx="-6" cy="-5" r="5" fill="#fff"/><circle cx="4" cy="-6" r="5" fill="#fff"/><ellipse cx="14" cy="-4" rx="5" ry="6" fill="#4a3b30"/><rect x="-8" y="6" width="3" height="7" fill="#4a3b30"/><rect x="6" y="6" width="3" height="7" fill="#4a3b30"/></g>'+
+  '<g class="wheat">'+wheat+'</g>'+
+  '<style>.sunrot{transform-origin:325px 52px;animation:spin 30s linear infinite}.cloud1{animation:drift 14s ease-in-out infinite alternate}.cloud2{animation:drift 18s ease-in-out infinite alternate-reverse}.tractor{animation:tr 9s ease-in-out infinite alternate}.duck{animation:bob 1.6s ease-in-out infinite}.d2{animation-delay:.5s}.ws{animation:sway 3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}.wheat>g:nth-child(odd) .ws{animation-delay:-1.2s}@keyframes spin{to{transform:rotate(360deg)}}@keyframes drift{to{transform:translateX(30px)}}@keyframes tr{to{transform:translateX(120px)}}@keyframes bob{50%{transform:translateY(-2px)}}@keyframes sway{50%{transform:rotate(4deg)}}</style>'+
+  '</svg>';
+}
+
+/* 稻子生长：stage 0..5 对应六个等级 */
+function plantSVG(stage){
+  var s='<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">';
+  s+='<ellipse cx="50" cy="112" rx="40" ry="8" fill="#8a5a33"/><ellipse cx="50" cy="109" rx="34" ry="5" fill="#a5703f"/>';
+  if(stage===0){
+    s+='<ellipse cx="50" cy="104" rx="7" ry="5" fill="#c9923e"/><path d="M50 100 q3 -6 0 -10" stroke="#8cc63f" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  } else {
+    var H=[0,30,52,72,86,94][stage], top=108-H, stemC = stage>=5?'#b9a33a':'#5aa832', leafC=stage>=5?'#c8b448':'#6dbb3a';
+    // 三根茎
+    s+='<path d="M50 108 Q50 '+(108-H/2)+' 50 '+top+'" stroke="'+stemC+'" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
+    if(stage>=2){ s+='<path d="M47 108 Q40 '+(108-H/2)+' 36 '+(top+12)+'" stroke="'+stemC+'" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M53 108 Q60 '+(108-H/2)+' 64 '+(top+12)+'" stroke="'+stemC+'" stroke-width="3" fill="none" stroke-linecap="round"/>'; }
+    // 叶子
+    var nLeaf = stage===1?2:stage===2?4:6;
+    for(var i=0;i<nLeaf;i++){
+      var y=104-i*(H/(nLeaf+1)), dir=i%2?1:-1, len=16+Math.min(i,3)*3;
+      var n=function(v){ return (+v.toFixed(2)); };
+      s+='<path d="M50 '+n(y)+' q'+n(dir*len*0.6)+' '+n(-len*0.5)+' '+n(dir*len)+' '+n(-len*0.2)+' q'+n(-dir*len*0.5)+' 0 '+n(-dir*len)+' '+n(len*0.2)+'z" fill="'+leafC+'"/>';
+    }
+    // 穗
+    if(stage>=3){
+      var tops=[[50,top],[36,top+12],[64,top+12]];
+      tops.forEach(function(t,k){
+        if(stage===3 && k>0) return;
+        var c = stage===3?'#9ccf5a':stage===4?'#d9cf5a':'#f2b934', droop = stage>=5?1:0;
+        var n = stage===3?3:stage===4?5:6;
+        for(var j=0;j<n;j++){
+          var gx=t[0]+(droop? (k===2?1:-1)*j*1.8 : 0), gy=t[1]-4-j*4+(droop?j*2.6:0);
+          s+='<ellipse cx="'+(gx-2.6)+'" cy="'+gy+'" rx="2.4" ry="4" fill="'+c+'" transform="rotate(-20 '+(gx-2.6)+' '+gy+')"/><ellipse cx="'+(gx+2.6)+'" cy="'+gy+'" rx="2.4" ry="4" fill="'+c+'" transform="rotate(20 '+(gx+2.6)+' '+gy+')"/>';
+        }
+      });
+    }
+    if(stage>=5){ s+='<g fill="#ffe27a"><circle cx="18" cy="30" r="2"/><circle cx="84" cy="22" r="2.5"/><circle cx="80" cy="50" r="1.6"/><circle cx="22" cy="58" r="1.6"/></g>'; }
+  }
+  return s+'</svg>';
+}
+
+/* ---------------- 抽题 ---------------- */
+function drawSet(){
+  var seen = lsGet(LS.seen, []);
+  var seenSet = {}; seen.forEach(function(id){ seenSet[id]=1; });
+  var pool = shuffle(BANK).sort(function(a,b){ return (seenSet[a.id]?1:0)-(seenSet[b.id]?1:0); }); // 优先没做过的
+  var quota = {1:6, 2:9, 3:5};
+  var picked = [], used = {};
+  function canTake(q){ return !used[q.id] && quota[q.diff]>0; }
+  function take(q){ picked.push(q); used[q.id]=1; quota[q.diff]--; }
+  // 1) 每位少年至少一道
+  shuffle(MEMBERS).forEach(function(m){
+    if(picked.some(function(p){ return p.members.indexOf(m.name)>=0; })) return;
+    var c = pool.filter(function(q){ return canTake(q) && q.members.indexOf(m.name)>=0 && q.members.length<=2; })[0];
+    if(c) take(c);
+  });
+  // 2) 题型保底：排序1、判断2、谁做的3
+  var need = {order:1, tf:2, who:3};
+  Object.keys(need).forEach(function(t){
+    var have = picked.filter(function(p){return p.type===t;}).length;
+    pool.forEach(function(q){ if(have<need[t] && q.type===t && canTake(q)){ take(q); have++; } });
+  });
+  // 3) 分类保底：每类至少2道
+  ['节目大事件','农事知识','少年档案','名场面','十个勤天日常'].forEach(function(c){
+    var have = picked.filter(function(p){return p.cat===c;}).length;
+    pool.forEach(function(q){ if(have<2 && q.cat===c && canTake(q)){ take(q); have++; } });
+    pool.forEach(function(q){ if(have<2 && q.cat===c && !used[q.id]){ take(q); have++; } }); // 难度配额不够时也要保底
+  });
+  // 4) 补满（控制排序题≤2，谁做的≤6）
+  pool.forEach(function(q){
+    if(picked.length>=N_Q || !canTake(q)) return;
+    var cnt = picked.filter(function(p){return p.type===q.type;}).length;
+    if((q.type==='order'&&cnt>=2)||(q.type==='who'&&cnt>=6)||(q.type==='tf'&&cnt>=3)) return;
+    take(q);
+  });
+  pool.forEach(function(q){ if(picked.length<N_Q && !used[q.id]){ picked.push(q); used[q.id]=1; } });
+  // 难度递增，同难度内随机
+  picked = shuffle(picked).sort(function(a,b){ return a.diff-b.diff; });
+  // 记录已出过的题
+  var newSeen = seen.concat(picked.map(function(p){return p.id;}));
+  if(newSeen.length > BANK.length - N_Q) newSeen = newSeen.slice(-(BANK.length - N_Q*2));
+  lsSet(LS.seen, newSeen);
+  return picked;
+}
+
+/* ---------------- 游戏状态 ---------------- */
+var S = null;
+function startGame(){
+  var nick = $('nick').value.trim(); lsSet(LS.nick, nick);
+  S = { nick:nick, qs:drawSet(), i:0, score:0, log:[], answered:false, order:[] };
+  show('quiz'); renderQ();
+}
+function typeLabel(t){ return {single:'单选题', who:'谁做的', tf:'判断题', order:'排序题'}[t]; }
+
+function renderQ(){
+  var q = S.qs[S.i]; S.answered=false; S.order=[];
+  $('progText').textContent=(S.i+1)+'/'+N_Q;
+  $('progBar').style.width=(S.i/N_Q*100)+'%';
+  $('scoreNow').textContent=S.score;
+  updatePlant(false);
+  $('qCat').textContent=q.cat;
+  $('qDiff').textContent='★★★'.slice(0,q.diff)+'☆☆☆'.slice(0,3-q.diff);
+  $('qType').textContent=typeLabel(q.type)+(q.type==='order'?' · 依次点击':'');
+  $('qText').textContent=q.q;
+  $('feedback').classList.add('hidden');
+  $('orderActions').classList.toggle('hidden', q.type!=='order');
+  $('btnOrderOk').disabled=true;
+  var box=$('opts'); box.innerHTML=''; box.className='options'+(q.type==='tf'?' tf':'')+(q.type==='who'?' who':'');
+  var idx;
+  if(q.type==='tf') idx=[0,1];
+  else idx=shuffle(q.options.map(function(_,k){return k;}));
+  S.view = idx;
+  idx.forEach(function(k,pos){
+    var b=el('button','opt'); b.dataset.k=k;
+    var label=q.options[k];
+    if(q.type==='tf'){ b.classList.add('tfbtn'); b.innerHTML=(k===0?'⭕ ':'❌ ')+esc(label); }
+    else if(q.type==='who'){ b.classList.add('member'); b.innerHTML='<span class="av" style="background:'+MCOLOR[label]+'">'+MICON[label]+'</span><span>'+esc(label)+'</span>'; }
+    else { b.innerHTML='<span class="k">'+(q.type==='order'?'':'ABCD'[pos])+'</span><span>'+esc(label)+'</span>'; }
+    b.addEventListener('click', function(){ onPick(b, k); });
+    box.appendChild(b);
+  });
+  var card=$('qCard'); card.classList.remove('fadeIn'); void card.offsetWidth;
+}
+
+function onPick(btn, k){
+  if(S.answered) return;
+  var q=S.qs[S.i];
+  if(q.type==='order'){
+    var p=S.order.indexOf(k);
+    if(p>=0) return;
+    S.order.push(k); btn.classList.add('picked'); btn.querySelector('.k').textContent=S.order.length;
+    $('btnOrderOk').disabled = S.order.length<q.options.length;
+    return;
+  }
+  finish(k===q.answer, k);
+}
+function orderReset(){ if(S.answered) return; S.order=[]; Array.prototype.forEach.call($('opts').children,function(b){ b.classList.remove('picked'); b.querySelector('.k').textContent=''; }); $('btnOrderOk').disabled=true; }
+function orderOk(){
+  var q=S.qs[S.i]; if(S.answered||S.order.length<q.options.length) return;
+  var ok = S.order.every(function(k,i){ return k===q.answer[i]; });
+  finish(ok, S.order.slice());
+}
+
+function finish(ok, picked){
+  var q=S.qs[S.i]; S.answered=true;
+  if(ok) S.score++;
+  S.log.push({q:q, ok:ok, picked:picked});
+  Array.prototype.forEach.call($('opts').children,function(b){
+    var k=+b.dataset.k; b.disabled=true;
+    if(q.type==='order'){
+      var pos=q.answer.indexOf(k);
+      b.querySelector('.k').textContent=pos+1;
+      b.classList.add(ok?'correct':(S.order.indexOf(k)===pos?'correct':'wrong'));
+    } else if(k===q.answer) b.classList.add('correct');
+    else if(k===picked) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  if(q.type==='order'){ // 按正确顺序重新排列
+    var box=$('opts'); var arr=Array.prototype.slice.call(box.children);
+    arr.sort(function(a,b){ return q.answer.indexOf(+a.dataset.k)-q.answer.indexOf(+b.dataset.k); }).forEach(function(b){ box.appendChild(b); });
+  }
+  var head=$('fbHead');
+  var praise=['答对啦！🌾','漂亮！不愧是禾伙人 👏','正确！又长高一截 🌱','对啦！做大做强！💪','完全正确 ✨'];
+  var comfort=['差一点点～ 🍂','没关系，土地会给答案 🌧️','这题有点难，记住啦 📒','下次一定！🌱'];
+  head.textContent= ok? praise[Math.floor(Math.random()*praise.length)] : comfort[Math.floor(Math.random()*comfort.length)];
+  head.className='fb-head '+(ok?'ok':'no');
+  var ans = q.type==='order' ? q.answer.map(function(k){return q.options[k];}).join(' → ') : q.options[q.answer];
+  $('fbExp').innerHTML=(ok?'':'正确答案：<b>'+esc(ans)+'</b><br>')+esc(q.explain);
+  $('btnNext').textContent = S.i===N_Q-1 ? '看看我的等级 🏅' : '下一题 →';
+  $('feedback').classList.remove('hidden');
+  $('orderActions').classList.add('hidden');
+  $('scoreNow').textContent=S.score;
+  $('qCard').classList.remove('shake'); void $('qCard').offsetWidth; if(!ok) $('qCard').classList.add('shake');
+  updatePlant(ok);
+  setTimeout(function(){ var f=$('feedback'); if(f.scrollIntoView) f.scrollIntoView({behavior:'smooth',block:'nearest'}); },60);
+}
+function updatePlant(grow){
+  var st=levelIdx(S.score);
+  var pb=$('plantBox'); pb.innerHTML=plantSVG(st);
+  if(grow){ pb.classList.remove('pop'); void pb.offsetWidth; pb.classList.add('pop'); }
+  $('stageName').textContent=LEVELS[st].emoji+' '+LEVELS[st].stage;
+}
+function next(){
+  if(S.i<N_Q-1){ S.i++; renderQ(); window.scrollTo({top:0,behavior:'smooth'}); }
+  else { $('progBar').style.width='100%'; showResult(); }
+}
+
+/* ---------------- 结果 ---------------- */
+function computeStats(){
+  var cats={}, mem={};
+  MEMBERS.forEach(function(m){ mem[m.name]={ok:0,n:0}; });
+  S.log.forEach(function(r){
+    var c=cats[r.q.cat]||(cats[r.q.cat]={ok:0,n:0}); c.n++; if(r.ok) c.ok++;
+    r.q.members.forEach(function(m){ mem[m].n++; if(r.ok) mem[m].ok++; });
+  });
+  var fav=null;
+  MEMBERS.forEach(function(m){
+    var x=mem[m.name]; if(!x.n) return;
+    var sc=x.ok/x.n + x.ok*0.01;
+    if(!fav || sc>fav.sc) fav={name:m.name, sc:sc, ok:x.ok, n:x.n};
+  });
+  return {cats:cats, mem:mem, fav:fav};
+}
+function showResult(){
+  var L=levelOf(S.score), st=computeStats(); S.stats=st; S.level=L;
+  var best=lsGet(LS.best,null), isNew=false;
+  if(!best || S.score>best.score){ best={score:S.score, level:L.name, date:today()}; lsSet(LS.best,best); isNew=true; }
+  show('result');
+  $('rPlant').innerHTML=plantSVG(levelIdx(S.score));
+  $('rEmoji').textContent=L.emoji;
+  $('rStage').textContent=L.stage;
+  $('rLevel').textContent=L.name;
+  $('rScore').textContent=S.score;
+  $('rDesc').textContent=L.desc;
+  $('rBest').textContent= isNew ? '🎉 新纪录！已保存为你的最好成绩' : '历史最好：'+best.score+'/20（'+best.level+'）';
+  var ded=getDedication();
+  $('dedicationCard').classList.toggle('hidden', !ded);
+  $('dedicationText').textContent=ded;
+  // 最懂的少年
+  var fav=st.fav, fm=$('favMember');
+  if(fav && fav.ok>0){
+    fm.innerHTML='<div class="av" style="background:'+MCOLOR[fav.name]+'">'+MICON[fav.name]+'</div><div class="t"><b>'+esc(fav.name)+'</b><br>相关题目答对 '+fav.ok+'/'+fav.n+'，你对他的故事最熟悉！</div>';
+  } else fm.innerHTML='<div class="t">这次和少年们相关的题都没答对，换一套题再试试吧～</div>';
+  var g=$('memberGrid'); g.innerHTML='';
+  MEMBERS.forEach(function(m){
+    var x=st.mem[m.name], pct=x.n?Math.round(x.ok/x.n*100):null;
+    var c=el('div','mcell');
+    c.innerHTML='<div class="av" style="background:'+m.color+(pct===null?'55':'')+'">'+m.icon+'</div><div>'+esc(m.name)+'</div><div class="pct" style="color:'+m.color+'">'+(pct===null?'—':pct+'%')+'</div>';
+    g.appendChild(c);
+  });
+  var cs=$('catStats'); cs.innerHTML='';
+  ['节目大事件','少年档案','名场面','农事知识','十个勤天日常'].forEach(function(k){
+    var x=st.cats[k]; if(!x) return;
+    var r=el('div','cat-row'); var pct=Math.round(x.ok/x.n*100);
+    r.innerHTML='<div class="lab"><span>'+k+'</span><span>'+x.ok+'/'+x.n+'</span></div><div class="track"><div class="fill"></div></div>';
+    cs.appendChild(r);
+    setTimeout(function(){ r.querySelector('.fill').style.width=pct+'%'; },80);
+  });
+  // 回顾
+  var rv=$('review'); rv.innerHTML='';
+  S.log.forEach(function(r,i){
+    var q=r.q, ans=q.type==='order'?q.answer.map(function(k){return q.options[k];}).join(' → '):q.options[q.answer];
+    var d=el('div','rv');
+    d.innerHTML='<div class="rq">'+(i+1)+'. '+esc(q.q)+'</div><div class="'+(r.ok?'ra':'rx')+'">'+(r.ok?'✓ ':'✗ ')+'答案：'+esc(ans)+'</div><div class="re">'+esc(q.explain)+' <a href="'+esc(q.src[0])+'" target="_blank" rel="noopener">出处</a></div>';
+    rv.appendChild(d);
+  });
+}
+function today(){ var d=new Date(); return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'; }
+function getDedication(){ var v=lsGet(LS.ded,null); return (v==null?DEFAULT_DEDICATION:v)||''; }
+
+/* ---------------- 证书 ---------------- */
+function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+function drawWheat(c,x,y,h,ang,col){
+  c.save(); c.translate(x,y); c.rotate(ang);
+  c.strokeStyle='#c99a2e'; c.lineWidth=4; c.beginPath(); c.moveTo(0,0); c.quadraticCurveTo(6,-h/2,0,-h); c.stroke();
+  c.fillStyle=col||'#f2c14e';
+  for(var i=0;i<6;i++){ var yy=-h+10+i*14;
+    c.save(); c.translate(-6,yy); c.rotate(-0.45); c.beginPath(); c.ellipse(0,0,6,13,0,0,Math.PI*2); c.fill(); c.restore();
+    c.save(); c.translate(6,yy); c.rotate(0.45); c.beginPath(); c.ellipse(0,0,6,13,0,0,Math.PI*2); c.fill(); c.restore(); }
+  c.beginPath(); c.ellipse(0,-h-6,6,14,0,0,Math.PI*2); c.fill();
+  c.restore();
+}
+function fitText(c,text,maxW,size,weight){
+  var s=size; c.font=weight+' '+s+'px "PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif';
+  while(c.measureText(text).width>maxW && s>20){ s-=2; c.font=weight+' '+s+'px "PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif'; }
+}
+function makeCert(){
+  var cv=$('certCanvas'), c=cv.getContext('2d'), W=1080, H=1500, F='"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif';
+  var L=S.level, st=S.stats, nick=S.nick||'禾伙人';
+  var g=c.createLinearGradient(0,0,0,H); g.addColorStop(0,'#fff9e6'); g.addColorStop(1,'#fbe8b4');
+  c.fillStyle=g; c.fillRect(0,0,W,H);
+  // 光芒
+  c.save(); c.translate(W/2,360); c.fillStyle='rgba(255,215,90,.18)';
+  for(var i=0;i<24;i++){ c.rotate(Math.PI/12); c.beginPath(); c.moveTo(0,0); c.lineTo(-40,-900); c.lineTo(40,-900); c.closePath(); c.fill(); }
+  c.restore();
+  // 边框
+  c.lineWidth=10; c.strokeStyle='#5aa832'; roundRect(c,36,36,W-72,H-72,40); c.stroke();
+  c.lineWidth=3; c.strokeStyle='#e0a526'; roundRect(c,60,60,W-120,H-120,30); c.stroke();
+  // 角落麦穗
+  drawWheat(c,110,1420,170,-0.35); drawWheat(c,150,1430,150,-0.1,'#e8b33c'); drawWheat(c,970,1420,170,0.35); drawWheat(c,930,1430,150,0.1,'#e8b33c');
+  drawWheat(c,120,250,120,-0.6); drawWheat(c,960,250,120,0.6);
+  // 田地
+  c.fillStyle='#a6d86a'; c.beginPath(); c.moveTo(60,1330); c.quadraticCurveTo(540,1250,1020,1330); c.lineTo(1020,1420); c.lineTo(60,1420); c.fill();
+  // 标题
+  c.textAlign='center'; c.textBaseline='alphabetic';
+  c.fillStyle='#e0a526'; c.font='600 34px '+F; c.fillText('—  种 地 吧  ·  禾 伙 人  —',W/2,170);
+  c.fillStyle='#2f6b1e'; c.font='900 92px '+F; c.fillText('禾伙人等级证书',W/2,280);
+  // 稻子
+  var img=new Image();
+  var svg=plantSVG(levelIdx(S.score)).replace('<svg ','<svg width="300" height="360" ');
+  img.onload=function(){
+    c.drawImage(img,W/2-150,300,300,360);
+    finishCert(c,W,H,F,L,st,nick);
+  };
+  img.onerror=function(){ finishCert(c,W,H,F,L,st,nick); };
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function finishCert(c,W,H,F,L,st,nick){
+  c.textAlign='center';
+  c.fillStyle='#6b6650'; c.font='500 40px '+F; c.fillText('兹证明',W/2,730);
+  fitText(c,nick,820,78,'900'); c.fillStyle='#3b3a2a'; c.fillText(nick,W/2,830);
+  c.strokeStyle='#e0a526'; c.lineWidth=3; c.beginPath(); c.moveTo(W/2-300,858); c.lineTo(W/2+300,858); c.stroke();
+  c.fillStyle='#6b6650'; c.font='500 38px '+F; c.fillText('在「种地吧禾伙人等级测试」中答对 '+S.score+' / 20 题，荣获',W/2,930);
+  // 等级牌
+  var bw=760,bh=170,bx=(W-bw)/2,by=965;
+  var gg=c.createLinearGradient(0,by,0,by+bh); gg.addColorStop(0,'#7cc243'); gg.addColorStop(1,'#4f9a2a');
+  c.fillStyle=gg; roundRect(c,bx,by,bw,bh,36); c.fill();
+  c.fillStyle='#fff6d0'; c.font='700 36px '+F; c.fillText(L.emoji+'  '+L.stage,W/2,by+56);
+  c.fillStyle='#fff'; c.font='900 82px '+F; c.fillText(L.name,W/2,by+142);
+  // 最懂的少年
+  var fav=st.fav;
+  c.font='500 36px '+F; c.fillStyle='#6b6650';
+  if(fav && fav.ok>0){
+    c.fillText('最懂的少年：',W/2-60,1210);
+    c.fillStyle=MCOLOR[fav.name]; c.font='800 40px '+F; c.textAlign='left'; c.fillText(MICON[fav.name]+' '+fav.name,W/2+50,1210); c.textAlign='center';
+  }
+  c.fillStyle='#2f6b1e'; c.font='800 40px '+F; c.fillText('十个勤天，做大做强！',W/2,1272);
+  c.fillStyle='#8b866e'; c.font='500 30px '+F; c.fillText('颁发日期：'+today(),W/2,1380);
+  // 印章
+  c.save(); c.translate(870,1345); c.rotate(-0.2); c.strokeStyle='rgba(214,69,90,.85)'; c.lineWidth=7; c.beginPath(); c.arc(0,0,84,0,Math.PI*2); c.stroke();
+  c.lineWidth=2; c.beginPath(); c.arc(0,0,72,0,Math.PI*2); c.stroke();
+  c.fillStyle='rgba(214,69,90,.85)'; c.font='900 34px '+F; c.fillText('禾伙人',0,-6); c.font='700 24px '+F; c.fillText('认证 ★',0,30); c.restore();
+  var url;
+  try{ url=$('certCanvas').toDataURL('image/png'); }catch(e){ url=null; }
+  S.certURL=url;
+  openModal('<h3>📜 你的禾伙人等级证书</h3>'+(url?'<img class="cert-img" id="certImg" alt="禾伙人等级证书" src="'+url+'">':'<p>证书生成失败</p>')+
+    '<p class="hint">手机上可以 <b>长按图片</b> 保存到相册，或点下面的按钮下载</p>'+
+    '<button class="btn primary" id="btnDl">下载 PNG 图片 ⬇️</button>');
+  $('btnDl').addEventListener('click', downloadCert);
+}
+function downloadCert(){
+  var cv=$('certCanvas'), name='禾伙人等级证书-'+(S.nick||'禾伙人')+'.png';
+  function go(href){ var a=document.createElement('a'); a.href=href; a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ document.body.removeChild(a); },100); }
+  if(cv.toBlob){ cv.toBlob(function(b){ if(!b){ go(S.certURL); return; } var u=URL.createObjectURL(b); go(u); setTimeout(function(){URL.revokeObjectURL(u);},4000); },'image/png'); }
+  else go(S.certURL);
+}
+
+/* ---------------- 弹窗 / 设置 ---------------- */
+function openModal(html){ $('modalBody').innerHTML=html; $('modal').classList.remove('hidden'); }
+function closeModal(){ $('modal').classList.add('hidden'); }
+function showLevels(){
+  var h='<h3>🌾 禾伙人等级</h3><p class="hint">一局 20 题，按答对题数评级，稻子也会跟着长大</p>';
+  LEVELS.forEach(function(l,i){ var max=i<LEVELS.length-1?LEVELS[i+1].min-1:20;
+    h+='<div class="lv-row"><div class="e">'+l.emoji+'</div><div><div class="n">'+l.stage+' · '+l.name+'</div><div class="r">答对 '+l.min+(max>l.min?'–'+max:'')+' 题</div></div></div>'; });
+  openModal(h);
+}
+function showSettings(){
+  openModal('<h3>⚙️ 给TA的话</h3><p class="hint">在这里写一句想对TA说的话，TA答完题会在结果页看到（只保存在这台设备上，留空则不显示）</p>'+
+    '<label class="field"><textarea id="dedInput" rows="4" maxlength="120" placeholder="例如：你就是我心里的金牌禾伙人 💛"></textarea></label>'+
+    '<button class="btn primary" id="btnDedSave">保存</button>');
+  $('dedInput').value=getDedication();
+  $('btnDedSave').addEventListener('click', function(){ lsSet(LS.ded, $('dedInput').value.trim()); closeModal(); });
+}
+
+/* ---------------- 初始化 ---------------- */
+function init(){
+  $('heroScene').innerHTML=heroSVG();
+  var strip=$('memberStrip');
+  MEMBERS.forEach(function(m){ var s=el('span','mchip','<i>'+m.icon+'</i>'+esc(m.name)); s.style.background=m.color; strip.appendChild(s); });
+  $('nick').value=lsGet(LS.nick,'')||'';
+  var best=lsGet(LS.best,null);
+  $('bestLine').textContent= best ? '🏅 最好成绩：'+best.score+'/20 · '+best.level : '题库 '+BANK.length+' 题，每局随机抽 20 题';
+  $('btnStart').addEventListener('click', startGame);
+  $('btnNext').addEventListener('click', next);
+  $('btnOrderReset').addEventListener('click', orderReset);
+  $('btnOrderOk').addEventListener('click', orderOk);
+  $('btnQuit').addEventListener('click', function(){ if(confirm('确定退出本局吗？进度不会保存。')){ init_home(); } });
+  $('btnRetry').addEventListener('click', startGame);
+  $('btnHome').addEventListener('click', init_home);
+  $('btnCert').addEventListener('click', makeCert);
+  $('btnLevels').addEventListener('click', showLevels);
+  $('btnSettings').addEventListener('click', showSettings);
+  $('modalX').addEventListener('click', closeModal);
+  $('modal').addEventListener('click', function(e){ if(e.target===$('modal')) closeModal(); });
+}
+function init_home(){
+  var best=lsGet(LS.best,null);
+  $('bestLine').textContent= best ? '🏅 最好成绩：'+best.score+'/20 · '+best.level : '题库 '+BANK.length+' 题，每局随机抽 20 题';
+  show('start');
+}
+window.ZD = { drawSet:drawSet, state:function(){return S;}, LEVELS:LEVELS };
+init();
+})();
+</script>
+</body>
+</html>
